@@ -1,26 +1,26 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
+import Login from "./components/Login";
+// const io = require("socket.io-client");
+// const socket = io.connect("https://zellipsoid.ngrok.io");
+import openSocket from "socket.io-client";
+const socket = openSocket("https://zellipsoid.ngrok.io");
 
 class App extends Component {
+  constructor() {
+    super();
+    socket.on("userDataFromBackend", str => {
+      console.log("Wooo!");
+      console.log(str);
+    });
+  }
+  // componentDidMount() {
+
+  // }
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <p>My Token = {window.token}</p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div className="center">
+        <Login />
       </div>
     );
   }
