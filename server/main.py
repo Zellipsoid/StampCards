@@ -1,9 +1,12 @@
 import flask
 from flask_socketio import SocketIO
+from flask_session import Session
 
 app = flask.Flask("__main__")
 app.config['SECRET_KEY'] = 'avraerbaweg23t2fe'
-socketio = SocketIO(app)
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
+socketio = SocketIO(app, manage_session=False)
 
 @app.route("/")
 def my_index():
