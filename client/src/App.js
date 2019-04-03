@@ -9,7 +9,7 @@ const socket = openSocket("https://zellipsoid.ngrok.io");
 class App extends Component {
   constructor() {
     super();
-    socket.on("userDataFromBackend", str => {
+    socket.on('userDataFromBackend', function (str) {
       console.log("Wooo!");
       console.log(str);
     });
@@ -20,7 +20,7 @@ class App extends Component {
   render() {
     return (
       <div className="center">
-        <Login />
+        <Login socket={socket} />
       </div>
     );
   }

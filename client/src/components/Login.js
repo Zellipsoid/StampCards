@@ -2,8 +2,8 @@ import React from "react";
 import "semantic-ui-css/semantic.min.css";
 // import "./App.css";
 import { Button, Input, Grid, Transition } from "semantic-ui-react";
-import openSocket from "socket.io-client";
-const socket = openSocket("https://zellipsoid.ngrok.io");
+// import openSocket from "socket.io-client";
+// const socket = openSocket("https://zellipsoid.ngrok.io");
 // const io = require("socket.io-client");
 // const socket = io.connect("https://zellipsoid.ngrok.io");
 
@@ -35,14 +35,14 @@ class Login extends React.Component {
     this.setState({ showCreateNewAccount: false, showLogin: false });
     if (!movingToCreateAccount) {
       setTimeout(
-        function() {
+        function () {
           this.setState({ showLogin: !this.state.showLogin });
         }.bind(this),
         500
       );
     } else {
       setTimeout(
-        function() {
+        function () {
           this.setState({
             showCreateNewAccount: !this.state.showCreateNewAccount
           });
@@ -52,7 +52,7 @@ class Login extends React.Component {
     }
   };
   login = () => {
-    socket.emit("login");
+    this.props.socket.emit("login");
   };
   create = () => {
     return (

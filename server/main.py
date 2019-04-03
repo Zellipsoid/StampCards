@@ -4,9 +4,9 @@ from flask_session import Session
 
 app = flask.Flask("__main__")
 app.config['SECRET_KEY'] = 'avraerbaweg23t2fe'
-app.config['SESSION_TYPE'] = 'filesystem'
-Session(app)
-socketio = SocketIO(app, manage_session=False)
+# app.config['SESSION_TYPE'] = 'filesystem'
+# Session(app)
+socketio = SocketIO(app)
 
 @app.route("/")
 def my_index():
@@ -16,6 +16,7 @@ def my_index():
 def connect():
     print('connected')
     # print(Socket(request.sid))
+    print(flask.request.sid)
 
 @socketio.on('disconnect')
 def disconnect():
@@ -24,6 +25,8 @@ def disconnect():
 @socketio.on('login')
 def find_user():
     print('got login request')
-    emit('userDataFromBackend', 'hello')
+    ret = 'hello'
+    # emit('userDataFromBackend', ret, room=flask.request.sid)
+    emit('userDataFromBackend', ret)
 
 socketio.run(app, debug=True)
