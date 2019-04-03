@@ -1,5 +1,5 @@
 import flask
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, send, emit
 from flask_session import Session
 
 app = flask.Flask("__main__")
@@ -24,6 +24,6 @@ def disconnect():
 @socketio.on('login')
 def find_user():
     print('got login request')
-    socketio.emit('userDataFromBackend', 'hello')
+    emit('userDataFromBackend', 'hello')
 
 socketio.run(app, debug=True)
