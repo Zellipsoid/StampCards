@@ -2,7 +2,7 @@ import React from "react";
 import "semantic-ui-css/semantic.min.css";
 // import "./App.css";
 import { Button, Input, Grid, Transition } from "semantic-ui-react";
-import { Message } from 'semantic-ui-react'
+import { Message } from "semantic-ui-react";
 // import openSocket from "socket.io-client";
 // const socket = openSocket("https://zellipsoid.ngrok.io");
 // const io = require("socket.io-client");
@@ -42,14 +42,14 @@ class Login extends React.Component {
     this.setState({ showCreateNewAccount: false, showLogin: false });
     if (!movingToCreateAccount) {
       setTimeout(
-        function () {
+        function() {
           this.setState({ showLogin: !this.state.showLogin });
         }.bind(this),
         500
       );
     } else {
       setTimeout(
-        function () {
+        function() {
           this.setState({
             showCreateNewAccount: !this.state.showCreateNewAccount
           });
@@ -59,27 +59,29 @@ class Login extends React.Component {
     }
   };
   login = () => {
-    this.props.socket.emit("login", { username: this.state.username, password: this.state.password });
+    this.props.socket.emit("login", {
+      username: this.state.username,
+      password: this.state.password
+    });
   };
   create_account = () => {
     if (this.state.password !== this.state.confirm_password) {
-
       this.setState({ password_mismatch: true });
-    }
-    else if (this.state.password.length < 6) {
+    } else if (this.state.password.length < 6) {
       this.setState({ password_too_short: true });
-    }
-    else {
+    } else {
       this.reset_message_states();
-      this.props.socket.emit("create_account", { username: this.state.username, password: this.state.password });
+      this.props.socket.emit("create_account", {
+        username: this.state.username,
+        password: this.state.password
+      });
     }
   };
   messages = () => {
     let message_text = "";
     if (this.state.password_mismatch) {
       message_text = "Passwords do not match";
-    }
-    else if (this.state.password_too_short) {
+    } else if (this.state.password_too_short) {
       message_text = "Password must have at least 6 characters";
     } else {
       return;
@@ -93,10 +95,15 @@ class Login extends React.Component {
         </div>
       </div>
     );
-  }
+  };
   reset_message_states = () => {
-    this.setState({ password_mismatch: false, password_too_short: false, invalid_login: false, username_exists: false });
-  }
+    this.setState({
+      password_mismatch: false,
+      password_too_short: false,
+      invalid_login: false,
+      username_exists: false
+    });
+  };
   create = () => {
     return (
       <div>
@@ -113,7 +120,9 @@ class Login extends React.Component {
         </div>
         <div className="niceMargins">
           <div className="row">
-            <Button fluid onClick={this.create_account}>Create Account</Button>
+            <Button fluid onClick={this.create_account}>
+              Create Account
+            </Button>
           </div>
         </div>
         <div className="niceMargins">
@@ -183,8 +192,8 @@ class Login extends React.Component {
           visible={showCreateNewAccount}
         >
           {this.create()}
-          {this.messages()}
         </Transition>
+        {this.messages()}
       </div>
     );
   }
