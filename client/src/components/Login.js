@@ -42,14 +42,14 @@ class Login extends React.Component {
     this.setState({ showCreateNewAccount: false, showLogin: false });
     if (!movingToCreateAccount) {
       setTimeout(
-        function() {
+        function () {
           this.setState({ showLogin: !this.state.showLogin });
         }.bind(this),
         500
       );
     } else {
       setTimeout(
-        function() {
+        function () {
           this.setState({
             showCreateNewAccount: !this.state.showCreateNewAccount
           });
@@ -68,7 +68,7 @@ class Login extends React.Component {
     if (this.state.password !== this.state.confirm_password) {
       this.setState({ password_mismatch: true });
     } else if (this.state.password.length < 6) {
-      this.setState({ password_too_short: true });
+      this.setState({ password_too_short: true, password_mismatch: false });
     } else {
       this.reset_message_states();
       this.props.socket.emit("create_account", {
@@ -91,6 +91,7 @@ class Login extends React.Component {
         <div className="row">
           <Message warning>
             <Message.Header>{message_text}</Message.Header>
+            <p>Please try again.</p>
           </Message>
         </div>
       </div>
