@@ -2,6 +2,7 @@ import React from "react";
 import "semantic-ui-css/semantic.min.css";
 // import "./App.css";
 import { Button, Input, Grid, Transition } from "semantic-ui-react";
+import { Message } from 'semantic-ui-react'
 // import openSocket from "socket.io-client";
 // const socket = openSocket("https://zellipsoid.ngrok.io");
 // const io = require("socket.io-client");
@@ -17,7 +18,9 @@ class Login extends React.Component {
     showCreateNewAccount: false,
     showLogin: true,
     password_mismatch: false,
-    invalid_login: false
+    password_too_short: false,
+    invalid_login: false,
+    username_exists: false
   };
   constructor() {
     super();
@@ -29,6 +32,7 @@ class Login extends React.Component {
     this.setState({ [evt.target.name]: evt.target.value });
   };
   toggleSignUp = () => {
+    this.reset_message_states();
     let movingToCreateAccount;
     if (this.state.showCreateNewAccount) {
       movingToCreateAccount = false;
@@ -58,14 +62,41 @@ class Login extends React.Component {
     this.props.socket.emit("login", { username: this.state.username, password: this.state.password });
   };
   create_account = () => {
-    if (this.state.password === this.state.confirm_password) {
-      this.props.socket.emit("create_account", { username: this.state.username, password: this.state.password });
-      this.setState({ password_mismatch: false });
-    }
-    else {
+    if (this.state.password !== this.state.confirm_password) {
+
       this.setState({ password_mismatch: true });
     }
+    else if (this.state.password.length < 6) {
+      this.setState({ password_too_short: true });
+    }
+    else {
+      this.reset_message_states();
+      this.props.socket.emit("create_account", { username: this.state.username, password: this.state.password });
+    }
   };
+  messages = () => {
+    let message_text = "";
+    if (this.state.password_mismatch) {
+      message_text = "Passwords do not match";
+    }
+    else if (this.state.password_too_short) {
+      message_text = "Password must have at least 6 characters";
+    } else {
+      return;
+    }
+    return (
+      <div className="niceMargins">
+        <div className="row">
+          <Message warning>
+            <Message.Header>{message_text}</Message.Header>
+          </Message>
+        </div>
+      </div>
+    );
+  }
+  reset_message_states = () => {
+    this.setState({ password_mismatch: false, password_too_short: false, invalid_login: false, username_exists: false });
+  }
   create = () => {
     return (
       <div>
@@ -152,6 +183,7 @@ class Login extends React.Component {
           visible={showCreateNewAccount}
         >
           {this.create()}
+          {this.messages()}
         </Transition>
       </div>
     );
