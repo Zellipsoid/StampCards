@@ -1,2 +1,6 @@
 
 client/flask_session/
+
+*.pyc
+
+server/flask_session/

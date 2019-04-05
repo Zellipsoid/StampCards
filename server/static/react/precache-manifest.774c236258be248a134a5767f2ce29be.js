@@ -1,7 +1,7 @@
 self.__precacheManifest = [
   {
-    "revision": "701ae6abd4719e9c2ada3535a497b341",
-    "url": "/static/react/media/outline-icons.701ae6ab.eot"
+    "revision": "962a1bf31c081691065fe333d9fa8105",
+    "url": "/static/react/media/icons.962a1bf3.svg"
   },
   {
     "revision": "187b5eb65527df51e529",
@@ -40,8 +40,8 @@ self.__precacheManifest = [
     "url": "/static/react/media/icons.b87b9ba5.ttf"
   },
   {
-    "revision": "962a1bf31c081691065fe333d9fa8105",
-    "url": "/static/react/media/icons.962a1bf3.svg"
+    "revision": "701ae6abd4719e9c2ada3535a497b341",
+    "url": "/static/react/media/outline-icons.701ae6ab.eot"
   },
   {
     "revision": "187b5eb65527df51e529",

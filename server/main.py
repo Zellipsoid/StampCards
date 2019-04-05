@@ -1,19 +1,34 @@
 import flask
 from flask_socketio import SocketIO, send, emit
 from flask_session import Session
-import flask_login
+from flask_login import LoginManager, UserMixin, login_user, logout_user
+import sqlite3
+db = sqlite3.connect('../stamps.db')
 
 app = flask.Flask("__main__")
-app.config['SECRET_KEY'] = 'avraerbaweg23t2fe'
 app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SECRET_KEY'] = 'avraerbaweg23t2fe'
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+# login_manager.login_view = "login"
 Session(app)
 socketio = SocketIO(app, manage_session=False)
 
 
-# flask-login
-login_manager = flask_login.LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = "login"
+class User(UserMixin):
+    def __init__(self,id):
+        self.id = id
+
+@login_manager.user_loader #returns user object after login
+def load_user(user_id):
+    cursor = db.execute("SELECT username FROM user WHERE username='%s'" % user_id)
+    user = cursor.fetchone()
+    print("logged in" + user[0])
+    if len(user) > 0:
+        return User(user[0])
+    else:
+        return
 
 @app.route("/")
 def my_index():
@@ -23,7 +38,8 @@ def my_index():
 def connect():
     print('connected')
     # print(Socket(request.sid))
-    print(flask.request.sid)
+    # login_user()
+    
 
 @socketio.on('disconnect')
 def disconnect():
@@ -35,5 +51,7 @@ def find_user():
     ret = 'hello'
     # emit('userDataFromBackend', ret, room=flask.request.sid)
     emit('userDataFromBackend', ret)
+    login_user(User("zachary186@live.com"))
 
-socketio.run(app, debug=True)
+if __name__ == '__main__':
+    socketio.run(app, debug=True)
