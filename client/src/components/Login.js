@@ -23,7 +23,8 @@ class Login extends React.Component {
     password_too_short: false,
     invalid_login: false,
     username_exists: false,
-    birthday: ""
+    birthDay: "",
+    birthMonth: ""
   };
   constructor() {
     super();
@@ -35,11 +36,7 @@ class Login extends React.Component {
     // and use it to target the key on our `state` object with the same name, using bracket syntax
     this.setState({ [evt.target.name]: evt.target.value });
   };
-  handleDateChange = (event, { name, value }) => {
-    if (this.state.hasOwnProperty(name)) {
-      this.setState({ [name]: value });
-    }
-  };
+  handleDateChange = (e, { name, value }) => this.setState({ [name]: value });
   toggleSignUp = () => {
     this.reset_message_states();
     let movingToCreateAccount;
@@ -140,9 +137,24 @@ class Login extends React.Component {
     return (
       <div>
         <Menu>
-          <Select placeholder="Month" options={months} />
+          <Menu.Item header>Birthday</Menu.Item>
           <Menu.Menu position="right">
-            <Select placeholder="Day" options={days} />
+            <Select
+              placeholder="Month"
+              options={months}
+              name="birthMonth"
+              compact
+              onChange={this.handleDateChange}
+            />
+          </Menu.Menu>
+          <Menu.Menu position="right">
+            <Select
+              placeholder="Day"
+              options={days}
+              name="birthDay"
+              compact
+              onChange={this.handleDateChange}
+            />
           </Menu.Menu>
         </Menu>
       </div>
