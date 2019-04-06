@@ -39,6 +39,9 @@
 .niceMargins {
   margin: 0.5em;
 }
+.fullWidth {
+  width: 100%;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

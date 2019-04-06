@@ -1,12 +1,16 @@
 import React from "react";
 import "semantic-ui-css/semantic.min.css";
-// import "./App.css";
 import { Button, Input, Grid, Transition } from "semantic-ui-react";
 import { Message } from "semantic-ui-react";
-// import openSocket from "socket.io-client";
-// const socket = openSocket("https://zellipsoid.ngrok.io");
-// const io = require("socket.io-client");
-// const socket = io.connect("https://zellipsoid.ngrok.io");
+import {
+  DateInput,
+  TimeInput,
+  DateTimeInput,
+  DatesRangeInput
+} from 'semantic-ui-calendar-react';
+import { Container } from 'semantic-ui-react'
+
+
 
 class Login extends React.Component {
   state = {
@@ -20,17 +24,24 @@ class Login extends React.Component {
     password_mismatch: false,
     password_too_short: false,
     invalid_login: false,
-    username_exists: false
+    username_exists: false,
+    birthday: ""
   };
   constructor() {
     super();
     this.handleChange = this.handleChange.bind(this);
   }
+
   handleChange = evt => {
     // check it out: we get the evt.target.name (which will be either "email" or "password")
     // and use it to target the key on our `state` object with the same name, using bracket syntax
     this.setState({ [evt.target.name]: evt.target.value });
   };
+  handleDateChange = (event, { name, value }) => {
+    if (this.state.hasOwnProperty(name)) {
+      this.setState({ [name]: value });
+    }
+  }
   toggleSignUp = () => {
     this.reset_message_states();
     let movingToCreateAccount;
@@ -105,6 +116,9 @@ class Login extends React.Component {
       username_exists: false
     });
   };
+  // timePicker = (props) => {
+  //   re
+  // }
   create = () => {
     return (
       <div>
@@ -121,6 +135,14 @@ class Login extends React.Component {
         </div>
         <div className="niceMargins">
           <div className="row">
+            <div class="ui input" className="fullWidth">
+              <input type="date" placeholder="Birthday" name="birthday">
+              </input>
+            </div>
+          </div>
+        </div>
+        <div className="niceMargins">
+          <div className="row">
             <Button fluid onClick={this.create_account}>
               Create Account
             </Button>
@@ -133,7 +155,7 @@ class Login extends React.Component {
             </Button>
           </div>
         </div>
-      </div>
+      </div >
     );
   };
   normal = () => {
@@ -161,7 +183,7 @@ class Login extends React.Component {
   render() {
     const { showCreateNewAccount, showLogin } = this.state;
     return (
-      <div className="ui container">
+      <Container>
         <div className="niceMargins">
           <Grid.Row>
             <Input
@@ -195,7 +217,7 @@ class Login extends React.Component {
           {this.create()}
         </Transition>
         {this.messages()}
-      </div>
+      </Container>
     );
   }
 }

@@ -23,7 +23,7 @@ class User(UserMixin):
 @login_manager.user_loader #returns user object after login
 def load_user(user_id):
     db = sqlite3.connect('../stamps.db')
-    cursor = db.execute("SELECT username FROM user WHERE username='%s'" % user_id)
+    cursor = db.execute("SELECT username FROM user WHERE username=?;", (user_id,))
     user = cursor.fetchone()
     db.close()
     print("logged in" + user[0])
@@ -57,12 +57,17 @@ def find_user(credentials):
     # emit('userDataFromBackend', ret, room=flask.request.sid)
     emit('userDataFromBackend', ret)
     login_user(User("zachary186@live.com"))
+    # pbkdf2_sha256.verify("password", hash)
 
 @socketio.on('create_account')
 def create_account(credentials):
     print('got account request: ' + credentials['username'] + " + " + credentials['password'])
-    # hash = pbkdf2_sha256.encrypt("password", rounds=200000, salt_size=16)
-    # pbkdf2_sha256.verify("password", hash)
+    password_hash = pbkdf2_sha256.encrypt(credentials['password'], rounds=200000, salt_size=16)
+    db = sqlite3.connect('../stamps.db')
+    cursor = db.execute("SELECT username FROM user WHERE username='%s'" % user_id)
+    user = cursor.fetchone()
+    db.close()
+    
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
