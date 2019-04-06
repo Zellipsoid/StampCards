@@ -34,7 +34,7 @@ def load_user(user_id):
 
 @app.route("/")
 def my_index():
-    return flask.render_template("index.html",token="Frog")
+    return flask.render_template("index.html")
 
 @socketio.on('connect')
 def connect():

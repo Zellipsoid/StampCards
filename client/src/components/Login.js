@@ -1,17 +1,15 @@
 import React from "react";
 import "semantic-ui-css/semantic.min.css";
-import { Button, Input, Grid, Transition } from "semantic-ui-react";
-import { Message } from "semantic-ui-react";
 import {
-  DateInput,
-  TimeInput,
-  DateTimeInput,
-  DatesRangeInput
-} from 'semantic-ui-calendar-react';
-import { Container } from 'semantic-ui-react'
-
-
-
+  Button,
+  Input,
+  Grid,
+  Transition,
+  Select,
+  Menu
+} from "semantic-ui-react";
+import { Message } from "semantic-ui-react";
+import { Container } from "semantic-ui-react";
 class Login extends React.Component {
   state = {
     visible: true,
@@ -41,7 +39,7 @@ class Login extends React.Component {
     if (this.state.hasOwnProperty(name)) {
       this.setState({ [name]: value });
     }
-  }
+  };
   toggleSignUp = () => {
     this.reset_message_states();
     let movingToCreateAccount;
@@ -53,14 +51,14 @@ class Login extends React.Component {
     this.setState({ showCreateNewAccount: false, showLogin: false });
     if (!movingToCreateAccount) {
       setTimeout(
-        function () {
+        function() {
           this.setState({ showLogin: !this.state.showLogin });
         }.bind(this),
         500
       );
     } else {
       setTimeout(
-        function () {
+        function() {
           this.setState({
             showCreateNewAccount: !this.state.showCreateNewAccount
           });
@@ -116,9 +114,40 @@ class Login extends React.Component {
       username_exists: false
     });
   };
-  // timePicker = (props) => {
-  //   re
-  // }
+  timePicker = () => {
+    const months = [
+      { key: "Jan", text: "January", value: 1 },
+      { key: "Feb", text: "February", value: 2 },
+      { key: "Mar", text: "March", value: 3 },
+      { key: "Apr", text: "April", value: 4 },
+      { key: "May", text: "May", value: 5 },
+      { key: "Jun", text: "June", value: 6 },
+      { key: "Jul", text: "July", value: 7 },
+      { key: "Aug", text: "August", value: 8 },
+      { key: "Sep", text: "September", value: 9 },
+      { key: "Oct", text: "October", value: 10 },
+      { key: "Nov", text: "November", value: 11 },
+      { key: "Dec", text: "December", value: 12 }
+    ];
+    const days = new Array(31).fill(undefined).map((x, i) => {
+      let day = i + 1;
+      return {
+        key: day,
+        text: day.toString(10),
+        value: day
+      };
+    });
+    return (
+      <div>
+        <Menu>
+          <Select placeholder="Month" options={months} />
+          <Menu.Menu position="right">
+            <Select placeholder="Day" options={days} />
+          </Menu.Menu>
+        </Menu>
+      </div>
+    );
+  };
   create = () => {
     return (
       <div>
@@ -134,12 +163,7 @@ class Login extends React.Component {
           </div>
         </div>
         <div className="niceMargins">
-          <div className="row">
-            <div class="ui input" className="fullWidth">
-              <input type="date" placeholder="Birthday" name="birthday">
-              </input>
-            </div>
-          </div>
+          <div className="row">{this.timePicker()}</div>
         </div>
         <div className="niceMargins">
           <div className="row">
@@ -155,7 +179,7 @@ class Login extends React.Component {
             </Button>
           </div>
         </div>
-      </div >
+      </div>
     );
   };
   normal = () => {
