@@ -4,6 +4,7 @@ from flask_session import Session
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
 import sqlite3
 from passlib.hash import pbkdf2_sha256
+import datetime
 
 app = flask.Flask("__main__")
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -61,11 +62,22 @@ def find_user(credentials):
 
 @socketio.on('create_account')
 def create_account(credentials):
-    print('got account request: ' + credentials['username'] + " + " + credentials['password'])
+    credentials['username'] = credentials['username'].lower() #make lowercase
+    print('got account request: ' + credentials['username'] + " + " + credentials['password'] + " + " + credentials['birthday'])
     password_hash = pbkdf2_sha256.encrypt(credentials['password'], rounds=200000, salt_size=16)
+
     db = sqlite3.connect('../stamps.db')
-    cursor = db.execute("SELECT username FROM user WHERE username='%s'" % user_id)
-    user = cursor.fetchone()
+
+    user = db.execute("SELECT username FROM user WHERE username=?;", (credentials['username'],)).fetchone()
+    if (user):
+        emit('username_taken')
+        print("username taken")
+    else:
+        cursor = db.cursor()
+        cursor.execute("INSERT INTO user(username, password, dob, date_created) VALUES (?,?,?,?);", (credentials['username'], password_hash, credentials['birthday'], datetime.date.today().strftime("%m-%d")))
+        emit('logged_in', {'username': credentials['username']})
+        login_user(User(credentials['username']))
+        print("created account")
     db.close()
     
 

@@ -9,9 +9,12 @@ const socket = openSocket("https://zellipsoid.ngrok.io");
 class App extends Component {
   constructor() {
     super();
-    socket.on('userDataFromBackend', function (str) {
+    socket.on("userDataFromBackend", function(str) {
       console.log("Wooo!");
       console.log(str);
+    });
+    socket.on("logged_in", function(data) {
+      console.log(`logging in as ${data}!`);
     });
   }
   // componentDidMount() {

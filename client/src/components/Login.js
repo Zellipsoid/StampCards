@@ -23,12 +23,16 @@ class Login extends React.Component {
     password_too_short: false,
     invalid_login: false,
     username_exists: false,
+    invalid_birthday: false,
     birthDay: "",
     birthMonth: ""
   };
-  constructor() {
+  constructor(props) {
     super();
     this.handleChange = this.handleChange.bind(this);
+    props.socket.on("username_taken", function() {
+      console.log("username taken!");
+    });
   }
 
   handleChange = evt => {
@@ -72,14 +76,29 @@ class Login extends React.Component {
   };
   create_account = () => {
     if (this.state.password !== this.state.confirm_password) {
-      this.setState({ password_mismatch: true });
+      this.setState({ password_mismatch: true, invalid_birthday: false });
     } else if (this.state.password.length < 6) {
-      this.setState({ password_too_short: true, password_mismatch: false });
+      this.setState({
+        password_too_short: true,
+        password_mismatch: false,
+        invalid_birthday: false
+      });
+    } else if (this.state.birthDay === "" || this.state.birthMonth === "") {
+      this.setState({
+        invalid_birthday: true,
+        password_mismatch: false,
+        password_too_short: false
+      });
     } else {
       this.reset_message_states();
       this.props.socket.emit("create_account", {
         username: this.state.username,
-        password: this.state.password
+        password: this.state.password,
+        birthday: `${
+          this.state.birthMonth < 10 ? "0" : ""
+        }${this.state.birthMonth.toString(10)}-${
+          this.state.birthDay < 10 ? "0" : ""
+        }${this.state.birthDay.toString(10)}`
       });
     }
   };
@@ -89,6 +108,8 @@ class Login extends React.Component {
       message_text = "Passwords do not match";
     } else if (this.state.password_too_short) {
       message_text = "Password must have at least 6 characters";
+    } else if (this.state.invalid_birthday) {
+      message_text = "Please enter a valid birthday";
     } else {
       return;
     }
