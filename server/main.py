@@ -74,7 +74,8 @@ def create_account(credentials):
         print("username taken")
     else:
         cursor = db.cursor()
-        cursor.execute("INSERT INTO user(username, password, dob, date_created) VALUES (?,?,?,?);", (credentials['username'], password_hash, credentials['birthday'], datetime.date.today().strftime("%m-%d")))
+        cursor.execute("INSERT INTO user(username, password, dob, date_created) VALUES(?,?,?,?);", (credentials['username'], password_hash, credentials['birthday'], datetime.date.today().strftime("%m-%d")))
+        db.commit()
         emit('logged_in', {'username': credentials['username']})
         login_user(User(credentials['username']))
         print("created account")
