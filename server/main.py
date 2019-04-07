@@ -72,6 +72,8 @@ def create_account(credentials):
     if (user):
         emit('username_taken')
         print("username taken")
+    elif credentials['username'] < 4 or credentials['password'] < 6:
+        print("password/username too short, check frontend validation")
     else:
         cursor = db.cursor()
         cursor.execute("INSERT INTO user(username, password, dob, date_created) VALUES(?,?,?,?);", (credentials['username'], password_hash, credentials['birthday'], datetime.date.today().strftime("%m-%d")))

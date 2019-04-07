@@ -19,30 +19,29 @@ class Login extends React.Component {
     confirm_password: "",
     showCreateNewAccount: false,
     showLogin: true,
-    password_mismatch: false,
-    password_too_short: false,
-    invalid_login: false,
     username_exists: false,
-    invalid_birthday: false,
+    validation_errors: false,
     birthDay: "",
     birthMonth: ""
   };
   constructor(props) {
-    super();
+    super(props);
     this.handleChange = this.handleChange.bind(this);
-    props.socket.on("username_taken", function() {
+    props.socket.on("username_taken", () => {
       console.log("username taken!");
+      this.setState({ username_exists: true, validation_errors: true })
     });
   }
 
   handleChange = evt => {
     // check it out: we get the evt.target.name (which will be either "email" or "password")
     // and use it to target the key on our `state` object with the same name, using bracket syntax
+    this.setState({ validation_errors: false });
     this.setState({ [evt.target.name]: evt.target.value });
   };
-  handleDateChange = (e, { name, value }) => this.setState({ [name]: value });
+  handleDateChange = (e, { name, value }) => this.setState({ [name]: value, validation_errors: false });
   toggleSignUp = () => {
-    this.reset_message_states();
+    this.setState({ validation_errors: false });
     let movingToCreateAccount;
     if (this.state.showCreateNewAccount) {
       movingToCreateAccount = false;
@@ -52,14 +51,14 @@ class Login extends React.Component {
     this.setState({ showCreateNewAccount: false, showLogin: false });
     if (!movingToCreateAccount) {
       setTimeout(
-        function() {
+        function () {
           this.setState({ showLogin: !this.state.showLogin });
         }.bind(this),
         500
       );
     } else {
       setTimeout(
-        function() {
+        function () {
           this.setState({
             showCreateNewAccount: !this.state.showCreateNewAccount
           });
@@ -75,43 +74,41 @@ class Login extends React.Component {
     });
   };
   create_account = () => {
-    if (this.state.password !== this.state.confirm_password) {
-      this.setState({ password_mismatch: true, invalid_birthday: false });
-    } else if (this.state.password.length < 6) {
+    if (this.state.password !== this.state.confirm_password || this.state.password.length < 6 || this.state.birthDay === "" || this.state.birthMonth === "" || this.state.username.length < 4) {
       this.setState({
-        password_too_short: true,
-        password_mismatch: false,
-        invalid_birthday: false
-      });
-    } else if (this.state.birthDay === "" || this.state.birthMonth === "") {
-      this.setState({
-        invalid_birthday: true,
-        password_mismatch: false,
-        password_too_short: false
+        validation_errors: true,
+        username_exists: false
       });
     } else {
-      this.reset_message_states();
+      this.setState({
+        validation_errors: false,
+        username_exists: false
+      });
       this.props.socket.emit("create_account", {
         username: this.state.username,
         password: this.state.password,
         birthday: `${
           this.state.birthMonth < 10 ? "0" : ""
-        }${this.state.birthMonth.toString(10)}-${
+          }${this.state.birthMonth.toString(10)}-${
           this.state.birthDay < 10 ? "0" : ""
-        }${this.state.birthDay.toString(10)}`
+          }${this.state.birthDay.toString(10)}`
       });
     }
   };
   messages = () => {
     let message_text = "";
-    if (this.state.password_mismatch) {
+    if (!this.state.validation_errors) {
+      return (<div></div>);
+    } else if (this.state.password !== this.state.confirm_password) {
       message_text = "Passwords do not match";
-    } else if (this.state.password_too_short) {
+    } else if (this.state.password.length < 6) {
       message_text = "Password must have at least 6 characters";
-    } else if (this.state.invalid_birthday) {
+    } else if (this.state.birthDay === "" || this.state.birthMonth === "") {
       message_text = "Please enter a valid birthday";
-    } else {
-      return;
+    } else if (this.state.username.length < 4) {
+      message_text = "Username must have at least 4 characters";
+    } else if (this.state.username_exists) {
+      message_text = "This username is already taken";
     }
     return (
       <div className="niceMargins">
@@ -123,14 +120,6 @@ class Login extends React.Component {
         </div>
       </div>
     );
-  };
-  reset_message_states = () => {
-    this.setState({
-      password_mismatch: false,
-      password_too_short: false,
-      invalid_login: false,
-      username_exists: false
-    });
   };
   timePicker = () => {
     const months = [
@@ -238,7 +227,7 @@ class Login extends React.Component {
   };
 
   render() {
-    const { showCreateNewAccount, showLogin } = this.state;
+    const { showCreateNewAccount, showLogin, validation_errors } = this.state;
     return (
       <Container>
         <div className="niceMargins">
@@ -273,7 +262,9 @@ class Login extends React.Component {
         >
           {this.create()}
         </Transition>
-        {this.messages()}
+        <Transition animation="fade" duration={500} visible={validation_errors}>
+          {this.messages()}
+        </Transition>
       </Container>
     );
   }
