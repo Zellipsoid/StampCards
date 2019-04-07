@@ -53,16 +53,28 @@ def disconnect():
 
 @socketio.on('login')
 def find_user(credentials):
+    credentials['username'] = credentials['username'].lower() #make username lowercase
     print('got login request: ' + credentials['username'] + " + " + credentials['password'])
-    ret = 'hello'
+    db = sqlite3.connect('../stamps.db')
+    user = db.execute("SELECT username, password FROM user WHERE username=?;", (credentials['username'],)).fetchone()
+    db.close()
+    
+    if user and pbkdf2_sha256.verify(credentials['password'], user[1]):
+        print("correct password!")
+        emit('authentication_successful', {'username': credentials['username']})
+        login_user(User(credentials['username']))
+    else:
+        print("invalid login!")    
+        emit('authentication_error')
+
     # emit('userDataFromBackend', ret, room=flask.request.sid)
-    emit('userDataFromBackend', ret)
-    login_user(User("zachary186@live.com"))
+    # emit('userDataFromBackend', ret)
+    # login_user(User("zachary186@live.com"))
     # pbkdf2_sha256.verify("password", hash)
 
 @socketio.on('create_account')
 def create_account(credentials):
-    credentials['username'] = credentials['username'].lower() #make lowercase
+    credentials['username'] = credentials['username'].lower() #make username lowercase
     print('got account request: ' + credentials['username'] + " + " + credentials['password'] + " + " + credentials['birthday'])
     password_hash = pbkdf2_sha256.encrypt(credentials['password'], rounds=200000, salt_size=16)
 

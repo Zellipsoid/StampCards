@@ -20,6 +20,7 @@ class Login extends React.Component {
     showCreateNewAccount: false,
     showLogin: true,
     username_exists: false,
+    invalid_login: false,
     validation_errors: false,
     birthDay: "",
     birthMonth: ""
@@ -30,6 +31,10 @@ class Login extends React.Component {
     props.socket.on("username_taken", () => {
       console.log("username taken!");
       this.setState({ username_exists: true, validation_errors: true })
+    });
+    props.socket.on("authentication_error", () => {
+      console.log("invalid login!");
+      this.setState({ invalid_login: true, validation_errors: true })
     });
   }
 
@@ -77,12 +82,14 @@ class Login extends React.Component {
     if (this.state.password !== this.state.confirm_password || this.state.password.length < 6 || this.state.birthDay === "" || this.state.birthMonth === "" || this.state.username.length < 4) {
       this.setState({
         validation_errors: true,
-        username_exists: false
+        username_exists: false,
+        invalid_login: false
       });
     } else {
       this.setState({
         validation_errors: false,
-        username_exists: false
+        username_exists: false,
+        invalid_login: false
       });
       this.props.socket.emit("create_account", {
         username: this.state.username,
@@ -99,6 +106,8 @@ class Login extends React.Component {
     let message_text = "";
     if (!this.state.validation_errors) {
       return (<div></div>);
+    } else if (this.state.invalid_login) {
+      message_text = "Your username or password is not recognized";
     } else if (this.state.password !== this.state.confirm_password) {
       message_text = "Passwords do not match";
     } else if (this.state.password.length < 6) {
