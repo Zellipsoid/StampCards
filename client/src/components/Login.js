@@ -6,10 +6,10 @@ import {
   Grid,
   Transition,
   Select,
-  Menu
+  Menu,
+  Container,
+  Message
 } from "semantic-ui-react";
-import { Message } from "semantic-ui-react";
-import { Container } from "semantic-ui-react";
 class Login extends React.Component {
   state = {
     visible: true,
