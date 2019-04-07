@@ -21,6 +21,12 @@ class User(UserMixin):
     def __init__(self,id):
         self.id = id
 
+def generate_user_information(username, db):
+    db = sqlite3.connect('../stamps.db')
+    #grab user and associated employee data, if it exists
+    user = db.execute("SELECT username, password FROM user NATURAL LEFT JOIN employees,  WHERE username=?;", (credentials['username'],)).fetchone()
+    #if employee data exists, find number of stamps scanned by employee, rank, and other relevent emplyee info
+    #if employee data does not exist, find number of stamps associated with the customer
 def login_user_wrapper(username, db):
     login_user(User(username))
     # update user to keep track of user session
@@ -90,7 +96,7 @@ def create_account(credentials):
     if (user):
         emit('username_taken')
         print("username taken")
-    elif credentials['username'] < 4 or credentials['password'] < 6:
+    elif len(credentials['username']) < 4 or len(credentials['password']) < 6:
         print("password/username too short, check frontend validation")
     else:
         cursor = db.cursor()

@@ -1,0 +1,1 @@
+print(db.execute("SELECT user.username, birthday, rank, count(*) as stamps_given FROM user NATURAL JOIN employee as e, stamp as emp_stamps WHERE user.username=? AND emp_stamps.employeeID=e.employeeID;", ("zachary186@live.com",)).fetchone())
