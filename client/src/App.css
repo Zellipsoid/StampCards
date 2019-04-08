@@ -58,10 +58,10 @@
   max-width: 420px;
   padding: 60px 0;
 }
-/* .Login {
-  padding: 60px 0;
+.square {
+  display: block;
+  max-width:800px;
+  max-height:800px;
+  width: auto;
+  height: auto;
 }
-
-.Login form {
-
-} */

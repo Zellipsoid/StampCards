@@ -21,19 +21,24 @@ class User(UserMixin):
     def __init__(self,id):
         self.id = id
 
-def generate_user_information(username, db):
-    db = sqlite3.connect('../stamps.db')
+def generate_user_information(username, db): # returns tuple (user_data, current_user_session)
     #grab user and associated employee data, if it exists
-    user = db.execute("SELECT username, password FROM user NATURAL LEFT JOIN employees,  WHERE username=?;", (credentials['username'],)).fetchone()
-    #if employee data exists, find number of stamps scanned by employee, rank, and other relevent emplyee info
-    #if employee data does not exist, find number of stamps associated with the customer
+    user = db.execute("SELECT u.username as u, birthday, rank, (SELECT sum(stamp.value) FROM stamp WHERE u.username = stamp.username) as stamp_balance, (SELECT count(*) FROM stamp WHERE e.employee_id = stamp.employee_id) as stamps_given, current_user_session FROM user as u NATURAL LEFT JOIN employee as e WHERE u.username=?;", (username,)).fetchone()
+    return ({
+        "username": user[0],
+        "birthday": user[1],
+        "rank": user[2],
+        "stamps": user[3],
+        "stamps_given": user[4]  
+    }, user[5])
+
 def login_user_wrapper(username, db):
     login_user(User(username))
     # update user to keep track of user session
     cursor = db.cursor()
     cursor.execute("UPDATE user SET current_user_session = ? WHERE username=?;", (flask.request.sid, username))
     db.commit()
-    emit('authentication_successful', {'username': username})
+    emit('authentication_successful', generate_user_information(username, db)[0])
 
 @login_manager.user_loader #returns user object after login
 def load_user(user_id):
@@ -41,7 +46,7 @@ def load_user(user_id):
     cursor = db.execute("SELECT username FROM user WHERE username=?;", (user_id,))
     user = cursor.fetchone()
     db.close()
-    print("logged in" + user[0])
+    print("logged in " + user[0])
     if len(user) > 0:
         return User(user[0])
     else:

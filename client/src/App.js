@@ -15,13 +15,14 @@ class App extends Component {
   state = {
     authenticated: false,
     show_dashboard: false,
-    username: ""
+    user_data: {}
   }
   constructor() {
     super();
     socket.on("authentication_successful", (data) => {
-      console.log(`logging in as ${data.username}!`);
-      this.state.username = data.username;
+      console.log(`User received:`);
+      console.log(data);
+      this.state.user_data = data;
       this.open_dashboard();
     });
   }
@@ -51,7 +52,7 @@ class App extends Component {
         </Transition>
         <Transition animation="fade" duration={500} visible={this.state.show_dashboard}>
           <div className="center">
-            <Dashboard socket={socket} username={this.state.username} />
+            <Dashboard socket={socket} user_data={this.state.user_data} />
           </div>
         </Transition>
       </div>
