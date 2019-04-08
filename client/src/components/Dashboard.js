@@ -37,7 +37,7 @@ class Dashboard extends Component {
                             onScan={this.handleScan}
                             style={{ width: '100%' }}
                         />
-                        <p>{this.state.result}</p>
+                        <Card fluid header="Aim this at a customer's QR code and tap the image" />
                     </div>
                 }
             </div>
