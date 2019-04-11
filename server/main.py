@@ -44,7 +44,7 @@ def generate_user_information(username, db): # returns tuple (user_data, current
         most_recent = datetime.datetime.today()
         least_recent = datetime.datetime.strptime(visits[-1][0], '%Y-%m-%d')
         average_days_between_visits = (most_recent - least_recent).total_seconds() / 86400 / len(visits)
-        last_visit = visits[0]
+        last_visit = visits[0][0]
     else:
         average_days_between_visits = None
         last_visit = None
