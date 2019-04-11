@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import QrReader from 'react-qr-reader'
-import { Card, Statistic, Transition } from 'semantic-ui-react'
+import { Card, Statistic, Transition, Grid, Button } from 'semantic-ui-react'
 import "../App.css";
 // import {
 //   Transition
@@ -73,7 +73,7 @@ class EmployeeView extends Component {
                     </div>
                 </Transition>
                 <Transition animation="fade" duration={250} visible={this.state.show_customer_info}>
-                    <CustomerInfo />
+                    <CustomerInfo customer_info={this.props.customer_info} />
                 </Transition>
             </div>
         );
@@ -82,7 +82,22 @@ class EmployeeView extends Component {
 function CustomerInfo(props) {
     return (
         <div>
-            <p>Customer Info here!</p>
+            <Grid columns={3}>
+                <Grid.Row>
+                    <Grid.Column>
+                        <Button>-</Button>
+                    </Grid.Column>
+                    <Grid.Column>
+                        <Statistic color='red' size='huge' style={{ width: "100%" }}>
+                            <Statistic.Value>{props.customer_info.stamps}</Statistic.Value>
+                            <Statistic.Label>Stamps Added</Statistic.Label>
+                        </Statistic>
+                    </Grid.Column>
+                    <Grid.Column>
+                        <Button>+</Button>
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid>
         </div>
     );
 }
