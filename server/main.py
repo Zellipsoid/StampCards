@@ -23,14 +23,33 @@ class User(UserMixin):
 
 def generate_user_information(username, db): # returns tuple (user_data, current_user_session)
     #grab user and associated employee data, if it exists
-    user = db.execute("SELECT u.username as u, birthday, rank, (SELECT sum(stamp.value) FROM stamp WHERE u.username = stamp.username) as stamp_balance, (SELECT count(*) FROM stamp WHERE e.employee_id = stamp.employee_id) as stamps_given, current_user_session FROM user as u NATURAL LEFT JOIN employee as e WHERE u.username=?;", (username,)).fetchone()
+    user = db.execute("SELECT u.username as u, birthday, rank, (SELECT sum(stamp.value) FROM stamp WHERE u.username = stamp.username) as stamp_balance, (SELECT count(*) FROM stamp WHERE e.employee_id = stamp.employee_id) as stamps_given, date_created, current_user_session FROM user as u NATURAL LEFT JOIN employee as e WHERE u.username=?;", (username,)).fetchone()
+    if user[3] == None:
+        stamps_received = 0
+    else:
+        stamps_received = user[3]
+
+    #get last 4 visits, generate average visit and also most recent visit
+    visits = db.execute("SELECT date FROM stamp WHERE username=? ORDER BY date DESC LIMIT 4;", (username,)).fetchall()
+    if visits:
+        most_recent = datetime.datetime.today()
+        least_recent = datetime.datetime.strptime(visits[-1][0], '%Y-%m-%d')
+        average_days_between_visits = (most_recent - least_recent).total_seconds() / 86400 / len(visits)
+        last_visit = visits[0]
+    else:
+        average_days_between_visits = None
+        last_visit = None
+
     return ({
         "username": user[0],
         "birthday": user[1],
         "rank": user[2],
-        "stamps": user[3],
-        "stamps_given": user[4]  
-    }, user[5])
+        "stamps": stamps_received,
+        "stamps_given": user[4],
+        "average_days_between_visits": average_days_between_visits,
+        "last_visit": last_visit,
+        "customer_since": user[5]
+    }, user[6])
 
 def login_user_wrapper(username, db):
     login_user(User(username))
@@ -105,7 +124,7 @@ def create_account(credentials):
         print("password/username too short, check frontend validation")
     else:
         cursor = db.cursor()
-        cursor.execute("INSERT INTO user(username, password, birthday, date_created) VALUES(?,?,?,?);", (credentials['username'], password_hash, credentials['birthday'], datetime.date.today().strftime("%m-%d")))
+        cursor.execute("INSERT INTO user(username, password, birthday, date_created) VALUES(?,?,?,?);", (credentials['username'], password_hash, credentials['birthday'], datetime.date.today().isoformat()))
         db.commit()
         print("created account")
         login_user_wrapper(credentials['username'], db)
