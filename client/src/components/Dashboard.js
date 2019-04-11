@@ -1,16 +1,14 @@
 import React, { Component } from "react";
-import QrReader from 'react-qr-reader'
 import { Card, Statistic } from 'semantic-ui-react'
 import "../App.css";
+import EmployeeView from "./EmployeeView";
 // import {
 //   Transition
 // } from "semantic-ui-react";
 var QRCode = require('qrcode.react');
 
 class Dashboard extends Component {
-    state = {
-        result: 'no result'
-    }
+    state = {}
     // constructor(props) {
     //     super(props);
     // }
@@ -31,13 +29,7 @@ class Dashboard extends Component {
                     <CustomerView user_data={this.props.user_data} />
                     :
                     <div>
-                        <QrReader
-                            delay={300}
-                            onError={this.handleError}
-                            onScan={this.handleScan}
-                            style={{ width: '100%' }}
-                        />
-                        <Card fluid header="Aim this at a customer's QR code and tap the image" />
+                        <EmployeeView socket={this.props.socket} user_data={this.props.user_data} />
                     </div>
                 }
             </div>
@@ -52,7 +44,7 @@ function CustomerView(props) {
     return (
 
         <div>
-            <QRCode value={props.user_data.username} style={{ width: '100%', height: 'auto' }} />
+            <QRCode value={props.user_data.username} style={{ width: '80%', height: 'auto', float: 'center' }} />
             <Card fluid header="Have a cashier scan this to earn or redeem points" />
             <Statistic color='red' size='huge' style={{ width: "100%" }}>
                 <Statistic.Value>{props.user_data.stamps}</Statistic.Value>

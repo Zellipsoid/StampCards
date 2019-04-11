@@ -129,7 +129,12 @@ def create_account(credentials):
         print("created account")
         login_user_wrapper(credentials['username'], db)
     db.close()
-    
+
+@socketio.on('retrieve_customer_data')
+def retrieve_customer_data(data):
+    # print(data['username_requesting'])
+    # print(data['username_to_retrieve'])
+    print(data)
 
 if __name__ == '__main__':
     #starting server, set all user sessions to null
