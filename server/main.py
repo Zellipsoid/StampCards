@@ -21,6 +21,15 @@ class User(UserMixin):
     def __init__(self,id):
         self.id = id
 
+def authenticate_request(username, required_rank, db):
+    rank = db.execute("SELECT rank FROM user NATURAL JOIN employee WHERE user.username=? AND current_user_session=?;", (username, flask.request.sid)).fetchone()
+    if rank == None:
+        return False
+    elif rank[0] < required_rank:
+        return False
+    else:
+        return True
+
 def generate_user_information(username, db): # returns tuple (user_data, current_user_session)
     #grab user and associated employee data, if it exists
     user = db.execute("SELECT u.username as u, birthday, rank, (SELECT sum(stamp.value) FROM stamp WHERE u.username = stamp.username) as stamp_balance, (SELECT count(*) FROM stamp WHERE e.employee_id = stamp.employee_id) as stamps_given, date_created, current_user_session FROM user as u NATURAL LEFT JOIN employee as e WHERE u.username=?;", (username,)).fetchone()
@@ -95,7 +104,7 @@ def disconnect():
 @socketio.on('login')
 def find_user(credentials):
     credentials['username'] = credentials['username'].lower().replace(' ', '') #make username lowercase, replace spaces
-    print('got login request: ' + credentials['username'] + " + " + credentials['password'])
+    # print('got login request: ' + credentials['username'] + " + " + credentials['password'])
     db = sqlite3.connect('../stamps.db')
     user = db.execute("SELECT username, password FROM user WHERE username=?;", (credentials['username'],)).fetchone()
     
@@ -111,7 +120,7 @@ def find_user(credentials):
 @socketio.on('create_account')
 def create_account(credentials):
     credentials['username'] = credentials['username'].lower().replace(' ', '') #make username lowercase, replace spaces
-    print('got account request: ' + credentials['username'] + " + " + credentials['password'] + " + " + credentials['birthday'])
+    # print('got account request: ' + credentials['username'] + " + " + credentials['password'] + " + " + credentials['birthday'])
     password_hash = pbkdf2_sha256.encrypt(credentials['password'], rounds=200000, salt_size=16)
 
     db = sqlite3.connect('../stamps.db')
@@ -134,7 +143,11 @@ def create_account(credentials):
 def retrieve_customer_data(data):
     # print(data['username_requesting'])
     # print(data['username_to_retrieve'])
-    print(data)
+    print("retrieving customer data...")
+    db = sqlite3.connect('../stamps.db')
+    if authenticate_request(data['username_requesting'], 1, db):
+        emit('customer_info', generate_user_information(data['username_to_retrieve'], db)[0])
+    db.close()
 
 if __name__ == '__main__':
     #starting server, set all user sessions to null

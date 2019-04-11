@@ -12,16 +12,6 @@ class Dashboard extends Component {
     // constructor(props) {
     //     super(props);
     // }
-    handleScan = data => {
-        if (data) {
-            this.setState({
-                result: data
-            })
-        }
-    }
-    handleError = err => {
-        console.error(err)
-    }
     render() {
         return (
             <div>

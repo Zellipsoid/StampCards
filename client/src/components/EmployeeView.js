@@ -8,11 +8,16 @@ import "../App.css";
 
 class EmployeeView extends Component {
     state = {
-        result: 'no result'
+        result: 'no result',
+        customer_info: {}
     }
-    // constructor(props) {
-    //     super(props);
-    // }
+    constructor(props) {
+        super(props);
+        props.socket.on("customer_info", (data) => {
+            this.setState({ customer_info: data })
+            console.log('got customer info!')
+        });
+    }
 
     handleScan = data => {
         if (data) {
