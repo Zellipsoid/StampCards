@@ -12,13 +12,14 @@ class EmployeeView extends Component {
         customer_info: {},
         show_scanner: true,
         show_customer_info: false,
-        number_of_stamps_added: 0,
-        stamps_subtracted: false
+        new_number_of_stamps: 0,
+        stamps_subtracted: false,
+        redeem_value: 7
     }
     constructor(props) {
         super(props);
         props.socket.on("customer_info", (data) => {
-            this.setState({ customer_info: data, number_of_stamps_added: data.stamps })
+            this.setState({ customer_info: data, new_number_of_stamps: data.stamps })
 
             console.log('got customer info!')
             this.open_customer_info();
@@ -34,21 +35,22 @@ class EmployeeView extends Component {
                     show_customer_info: true
                 });
             }.bind(this),
-            250
+            500
         );
     };
     close_customer_info = () => {
         this.setState({
             show_customer_info: false
         });
-        setTimeout(
-            function () {
-                this.setState({
-                    show_scanner: true
-                });
-            }.bind(this),
-            250
-        );
+        //commented out for jank fix
+        // setTimeout(
+        //     function () {
+        this.setState({
+            show_scanner: true
+        });
+        // }.bind(this),
+        // 500
+        // );
     };
     handleScan = data => {
         if (data && this.state.show_scanner) {
@@ -63,12 +65,26 @@ class EmployeeView extends Component {
     }
     add_a_stamp = () => {
         console.log("Adding a stamp!")
-        this.setState({ number_of_stamps_added: this.state.number_of_stamps_added + 1 })
+        this.setState({ new_number_of_stamps: this.state.new_number_of_stamps + 1 })
+    }
+    redeem_stamps = () => {
+        console.log("Redeeming stamps!")
+        this.setState({ new_number_of_stamps: this.state.new_number_of_stamps - this.state.redeem_value, stamps_subtracted: true })
+    }
+    apply_stamps = () => {
+        console.log("Saving data...")
+        this.setState({ new_number_of_stamps: 0, stamps_subtracted: false, customer_info: {} });
+        this.close_customer_info();
+        this.props.socket.emit("update_customer_stamps", {
+            username_to_update: this.state.customer_info.username,
+            username_requesting: this.props.user_data.username,
+            numer_of_stamps: this.state.new_number_of_stamps
+        });
     }
     render() {
         return (
             <div>
-                <Transition animation="fade" duration={250} visible={this.state.show_scanner}>
+                <Transition animation="fade" duration={500} visible={this.state.show_scanner}>
                     <div>
                         <QrReader
                             delay={300}
@@ -79,35 +95,43 @@ class EmployeeView extends Component {
                         <Card fluid header="Aim this at a customer's QR code" />
                     </div>
                 </Transition>
-                <Transition animation="fade" duration={250} visible={this.state.show_customer_info}>
+                <Transition animation="fade" duration={500} visible={this.state.show_customer_info}>
                     <CustomerInfo customer_info={this.state.customer_info}
                         stamps_subtracted={this.state.stamps_subtracted}
-                        number_of_stamps_added={this.state.number_of_stamps_added}
-                        add_a_stamp={this.add_a_stamp} />
+                        new_number_of_stamps={this.state.new_number_of_stamps}
+                        add_a_stamp={this.add_a_stamp}
+                        redeem_stamps={this.redeem_stamps}
+                        redeem_value={this.state.redeem_value}
+                        apply_stamps={this.apply_stamps}
+                        show_customer_info={this.state.show_customer_info} />
                 </Transition>
             </div>
         );
     }
 }
 function CustomerInfo(props) {
-    return (
-        <div>
-            <Statistic color='red' size='huge' style={{ width: "100%" }}>
-                <Statistic.Value>{props.number_of_stamps_added}</Statistic.Value>
-                <Statistic.Label>Current Stamps</Statistic.Label>
-            </Statistic>
-            <Grid columns={2}>
-                <Grid.Row>
-                    <Grid.Column>
-                        <Button size='massive' disabled={props.stamps_subtracted} fluid>Redeem 7 Stamps</Button>
-                    </Grid.Column>
-                    <Grid.Column>
-                        <Button size='massive' onClick={props.add_a_stamp} fluid>Add a Stamp</Button>
-                    </Grid.Column>
-                </Grid.Row>
-            </Grid>
-            <Button size='massive' fluid>Apply</Button>
-        </div>
-    );
+    if (props.show_customer_info) { //jank fix for weird transition issue
+        return (
+            <div>
+                <Statistic color='red' size='huge' style={{ width: "100%" }}>
+                    <Statistic.Value>{props.new_number_of_stamps}</Statistic.Value>
+                    <Statistic.Label>Current Stamps</Statistic.Label>
+                </Statistic>
+                <Grid columns={2}>
+                    <Grid.Row>
+                        <Grid.Column>
+                            <Button size='massive' onClick={props.redeem_stamps} disabled={props.stamps_subtracted || props.customer_info.stamps < props.redeem_value} fluid>{`Redeem ${props.redeem_value} Stamps`}</Button>
+                        </Grid.Column>
+                        <Grid.Column>
+                            <Button size='massive' onClick={props.add_a_stamp} fluid>Add a Stamp</Button>
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
+                <Button size='massive' onClick={props.apply_stamps} fluid>Apply</Button>
+            </div>
+        );
+    } else {
+        return (<div></div>);
+    }
 }
 export default EmployeeView;

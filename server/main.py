@@ -30,6 +30,13 @@ def authenticate_request(username, required_rank, db):
     else:
         return True
 
+# def get_number_of_stamps(username, db):
+#     stamps = db.execute("SELECT stamps FROM user WHERE username=?;", (username,)).fetchone()
+#     if (stamps):
+#         return stamps[0]
+#     else:
+#         return -1
+
 def generate_user_information(username, db): # returns tuple (user_data, current_user_session)
     #grab user and associated employee data, if it exists
     user = db.execute("SELECT u.username as u, birthday, rank, (SELECT sum(stamp.value) FROM stamp WHERE u.username = stamp.username) as stamp_balance, (SELECT count(*) FROM stamp WHERE e.employee_id = stamp.employee_id) as stamps_given, date_created, current_user_session FROM user as u NATURAL LEFT JOIN employee as e WHERE u.username=?;", (username,)).fetchone()
@@ -147,6 +154,19 @@ def retrieve_customer_data(data):
     db = sqlite3.connect('../stamps.db')
     if authenticate_request(data['username_requesting'], 1, db):
         emit('customer_info', generate_user_information(data['username_to_retrieve'], db)[0])
+    db.close()
+
+@socketio.on('update_customer_stamps')
+def update_stamps(data):
+    db = sqlite3.connect('../stamps.db')
+    if authenticate_request(data['username_requesting'], 1, db):
+        #update stamps here
+        cursor = db.cursor()
+        cursor.execute("UPDATE user SET stamps=? WHERE username=?;", (data['number_of_stamps'], data['username_to_update']))
+        db.commit()
+        # emit to user who had stamps updated, maybe employee later
+        emit('new_stamps_value', data['number_of_stamps'])
+
     db.close()
 
 if __name__ == '__main__':
