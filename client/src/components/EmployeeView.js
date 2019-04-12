@@ -48,7 +48,7 @@ class EmployeeView extends Component {
         );
     };
     handleScan = data => {
-        if (data) {
+        if (data && this.state.show_scanner) {
             this.props.socket.emit("retrieve_customer_data", {
                 username_to_retrieve: data,
                 username_requesting: this.props.user_data.username
@@ -73,7 +73,7 @@ class EmployeeView extends Component {
                     </div>
                 </Transition>
                 <Transition animation="fade" duration={250} visible={this.state.show_customer_info}>
-                    <CustomerInfo customer_info={this.props.customer_info} />
+                    <CustomerInfo customer_info={this.state.customer_info} />
                 </Transition>
             </div>
         );
@@ -82,22 +82,27 @@ class EmployeeView extends Component {
 function CustomerInfo(props) {
     return (
         <div>
+            <Statistic color='red' size='huge' style={{ width: "100%" }}>
+                <Statistic.Value>{props.customer_info.stamps}</Statistic.Value>
+                <Statistic.Label>Current Stamps</Statistic.Label>
+            </Statistic>
             <Grid columns={3}>
                 <Grid.Row>
                     <Grid.Column>
-                        <Button>-</Button>
+                        <Button size='massive' fluid>-</Button>
                     </Grid.Column>
                     <Grid.Column>
                         <Statistic color='red' size='huge' style={{ width: "100%" }}>
                             <Statistic.Value>{props.customer_info.stamps}</Statistic.Value>
-                            <Statistic.Label>Stamps Added</Statistic.Label>
+                            <Statistic.Label>Stamps to Add or Subtract</Statistic.Label>
                         </Statistic>
                     </Grid.Column>
                     <Grid.Column>
-                        <Button>+</Button>
+                        <Button size='massive' fluid>+</Button>
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
+            <Button size='massive' fluid>Apply</Button>
         </div>
     );
 }
