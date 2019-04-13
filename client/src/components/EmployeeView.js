@@ -130,13 +130,13 @@ function CustomerInfo(props) {
                         <Grid.Column>
                             <Statistic color='red' size='mini' style={{ width: "100%" }}>
                                 <Statistic.Label>Last Visit</Statistic.Label>
-                                <Statistic.Value text>{props.customer_info.last_visit}</Statistic.Value>
+                                <Statistic.Value text>{props.customer_info.last_visit ? props.customer_info.last_visit : "Never"}</Statistic.Value>
                             </Statistic>
                         </Grid.Column>
                         <Grid.Column>
                             <Statistic color='red' size='mini' style={{ width: "100%" }}>
                                 <Statistic.Label>Visits Every</Statistic.Label>
-                                <Statistic.Value text>{`~${Math.round(props.customer_info.average_days_between_visits)} days`}</Statistic.Value>
+                                <Statistic.Value text>{props.customer_info.average_days_between_visits ? `~${Math.round(props.customer_info.average_days_between_visits)} days` : "???"}</Statistic.Value>
                             </Statistic>
                         </Grid.Column>
                     </Grid.Row>

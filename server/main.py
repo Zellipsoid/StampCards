@@ -50,7 +50,8 @@ def generate_user_information(username, db): # returns tuple (user_data, current
     if visits:
         most_recent = datetime.datetime.today()
         least_recent = datetime.datetime.strptime(visits[-1][0], '%Y-%m-%d')
-        average_days_between_visits = (most_recent - least_recent).total_seconds() / 86400 / len(visits)
+        #must have enough data to calc time between visits
+        average_days_between_visits = (most_recent - least_recent).total_seconds() / 86400 / len(visits) if len(visits) > 1 else None
         last_visit = visits[0][0]
     else:
         average_days_between_visits = None
@@ -63,7 +64,7 @@ def generate_user_information(username, db): # returns tuple (user_data, current
         "stamps": stamps_received,
         "stamps_given": user[4],
         "average_days_between_visits": average_days_between_visits,
-        "last_visit": last_visit,
+        "last_visit": last_visit, #TODO When adding more organizations, last_visit should come from stamps, not account created date
         "customer_since": user[5]
     }, user[6])
 
