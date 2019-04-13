@@ -109,6 +109,7 @@ class EmployeeView extends Component {
     }
 }
 function CustomerInfo(props) {
+    // TODO format dates to look nice
     if (props.show_customer_info) { //jank fix for weird transition issue
         return (
             <div>
