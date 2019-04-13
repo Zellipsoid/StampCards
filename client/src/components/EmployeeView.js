@@ -83,6 +83,9 @@ class EmployeeView extends Component {
     render() {
         return (
             <div>
+                <Modal size="fullscreen" open={this.state.show_employee_management} onClose={this.toggleManagementPanel}>
+
+                </Modal>
                 <Transition animation="fade" duration={500} visible={this.state.show_scanner}>
                     <div>
                         <QrReader
@@ -92,6 +95,7 @@ class EmployeeView extends Component {
                             style={{ width: '100%' }}
                         />
                         <Card fluid header="Aim this at a customer's QR code" />
+                        <Button attached="bottom">Open Employee Management</Button>
                     </div>
                 </Transition>
                 <Transition animation="fade" duration={500} visible={this.state.show_customer_info}>
