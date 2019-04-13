@@ -25,6 +25,11 @@ class App extends Component {
       this.state.user_data = data;
       this.open_dashboard();
     });
+    socket.on("refresh_user_data", (data) => {
+      console.log(`User refreshed:`);
+      console.log(data);
+      this.setState({ user_data: data });
+    });
   }
   open_dashboard = () => {
     this.setState({

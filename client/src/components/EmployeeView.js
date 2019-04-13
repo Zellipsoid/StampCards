@@ -19,8 +19,7 @@ class EmployeeView extends Component {
     constructor(props) {
         super(props);
         props.socket.on("customer_info", (data) => {
-            this.setState({ customer_info: data, new_number_of_stamps: data.stamps })
-
+            this.setState({ customer_info: data })
             console.log('got customer info!')
             this.open_customer_info();
         });
@@ -73,13 +72,13 @@ class EmployeeView extends Component {
     }
     apply_stamps = () => {
         console.log("Saving data...")
-        this.setState({ new_number_of_stamps: 0, stamps_subtracted: false, customer_info: {} });
         this.close_customer_info();
         this.props.socket.emit("update_customer_stamps", {
             username_to_update: this.state.customer_info.username,
             username_requesting: this.props.user_data.username,
-            numer_of_stamps: this.state.new_number_of_stamps
+            number_of_stamps: this.state.new_number_of_stamps
         });
+        this.setState({ new_number_of_stamps: 0, stamps_subtracted: false, customer_info: {} });
     }
     render() {
         return (
@@ -114,7 +113,7 @@ function CustomerInfo(props) {
         return (
             <div>
                 <Statistic color='red' size='huge' style={{ width: "100%" }}>
-                    <Statistic.Value>{props.new_number_of_stamps}</Statistic.Value>
+                    <Statistic.Value>{props.new_number_of_stamps + props.customer_info.stamps}</Statistic.Value>
                     <Statistic.Label>Current Stamps</Statistic.Label>
                 </Statistic>
                 <Grid columns={2}>

@@ -39,7 +39,7 @@ def authenticate_request(username, required_rank, db):
 
 def generate_user_information(username, db): # returns tuple (user_data, current_user_session)
     #grab user and associated employee data, if it exists
-    user = db.execute("SELECT u.username as u, birthday, rank, (SELECT sum(stamp.value) FROM stamp WHERE u.username = stamp.username) as stamp_balance, (SELECT count(*) FROM stamp WHERE e.employee_id = stamp.employee_id) as stamps_given, date_created, current_user_session FROM user as u NATURAL LEFT JOIN employee as e WHERE u.username=?;", (username,)).fetchone()
+    user = db.execute("SELECT u.username as u, birthday, rank, (SELECT sum(stamp.value) FROM stamp WHERE u.username = stamp.username) as stamp_balance, (SELECT count(*) FROM stamp WHERE e.username = stamp.employee_username) as stamps_given, date_created, current_user_session FROM user as u NATURAL LEFT JOIN employee as e WHERE u.username=?;", (username,)).fetchone()
     if user[3] == None:
         stamps_received = 0
     else:
@@ -162,10 +162,13 @@ def update_stamps(data):
     if authenticate_request(data['username_requesting'], 1, db):
         #update stamps here
         cursor = db.cursor()
-        cursor.execute("UPDATE user SET stamps=? WHERE username=?;", (data['number_of_stamps'], data['username_to_update']))
+        cursor.execute("INSERT INTO stamp(username, employee_username, value, date) VALUES(?,?,?,?);", (data['username_to_update'],data['username_requesting'], data['number_of_stamps'], datetime.date.today().isoformat()))
+        # cursor.execute("UPDATE user SET stamps=? WHERE username=?;", (data['number_of_stamps'], data['username_to_update']))
         db.commit()
         # emit to user who had stamps updated, maybe employee later
-        emit('new_stamps_value', data['number_of_stamps'])
+        user_info = generate_user_information(data['username_to_update'], db)
+        print('emitting to' + str(user_info[1]))
+        emit('refresh_user_data',user_info[0], room=user_info[1])
 
     db.close()
 
