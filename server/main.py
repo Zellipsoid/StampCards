@@ -95,7 +95,7 @@ def my_index():
 def connect():
     print('connected')
 
-@socketio.on('disconnect')
+@socketio.on('disconnect') #TODO this causes users to not be able to close the phone without being logged out, need to fix this
 def disconnect():
     if current_user.is_authenticated:
         logout_user()
@@ -166,9 +166,12 @@ def update_stamps(data):
         # cursor.execute("UPDATE user SET stamps=? WHERE username=?;", (data['number_of_stamps'], data['username_to_update']))
         db.commit()
         # emit to user who had stamps updated, maybe employee later
-        user_info = generate_user_information(data['username_to_update'], db)
-        print('emitting to' + str(user_info[1]))
-        emit('refresh_user_data',user_info[0], room=user_info[1])
+        user_info = generate_user_information(data['username_to_update'], db) #[0] is user data, [1] is user session
+        if user_info[1]:
+            print('Emitting new stamps to' + str(user_info[1]))
+            emit('refresh_user_data',user_info[0], room=user_info[1])
+        else:
+            print('Receiving user not logged in')
 
     db.close()
 

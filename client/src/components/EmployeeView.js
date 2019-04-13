@@ -14,7 +14,7 @@ class EmployeeView extends Component {
         show_customer_info: false,
         new_number_of_stamps: 0,
         stamps_subtracted: false,
-        redeem_value: 7
+        redeem_value: 8
     }
     constructor(props) {
         super(props);
@@ -125,7 +125,32 @@ function CustomerInfo(props) {
                             <Button size='massive' onClick={props.add_a_stamp} fluid>Add a Stamp</Button>
                         </Grid.Column>
                     </Grid.Row>
+
+                    <Grid.Row centered columns={2}>
+                        <Grid.Column>
+                            <Statistic color='red' size='mini' style={{ width: "100%" }}>
+                                <Statistic.Label>Last Visit</Statistic.Label>
+                                <Statistic.Value text>{props.customer_info.last_visit}</Statistic.Value>
+                            </Statistic>
+                        </Grid.Column>
+                        <Grid.Column>
+                            <Statistic color='red' size='mini' style={{ width: "100%" }}>
+                                <Statistic.Label>Visits Every</Statistic.Label>
+                                <Statistic.Value text>{`~${Math.round(props.customer_info.average_days_between_visits)} days`}</Statistic.Value>
+                            </Statistic>
+                        </Grid.Column>
+                    </Grid.Row>
+
+                    <Grid.Row centered columns={1}>
+                        <Grid.Column>
+                            <Statistic color='red' size='mini' style={{ width: "100%" }}>
+                                <Statistic.Label>Customer Since</Statistic.Label>
+                                <Statistic.Value text>{props.customer_info.customer_since}</Statistic.Value>
+                            </Statistic>
+                        </Grid.Column>
+                    </Grid.Row>
                 </Grid>
+
                 <Button size='massive' onClick={props.apply_stamps} fluid>Apply</Button>
             </div>
         );
