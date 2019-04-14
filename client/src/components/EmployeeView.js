@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import QrReader from 'react-qr-reader'
-import { Card, Statistic, Transition, Grid, Button } from 'semantic-ui-react'
+import { Card, Statistic, Transition, Grid, Button, Modal } from 'semantic-ui-react'
+import EmployeeManagement from "./EmployeeManagement";
 import "../App.css";
 // import {
 //   Transition
@@ -12,6 +13,7 @@ class EmployeeView extends Component {
         customer_info: {},
         show_scanner: true,
         show_customer_info: false,
+        show_employee_management: false,
         new_number_of_stamps: 0,
         stamps_subtracted: false,
         redeem_value: 8
@@ -41,15 +43,40 @@ class EmployeeView extends Component {
         this.setState({
             show_customer_info: false
         });
-        //commented out for jank fix
-        // setTimeout(
-        //     function () {
+        setTimeout(
+            function () {
+                this.setState({
+                    show_scanner: true
+                });
+            }.bind(this),
+            500
+        );
+    };
+    open_management_panel = () => {
         this.setState({
-            show_scanner: true
+            show_scanner: false
         });
-        // }.bind(this),
-        // 500
-        // );
+        setTimeout(
+            function () {
+                this.setState({
+                    show_employee_management: true
+                });
+            }.bind(this),
+            500
+        );
+    };
+    close_management_panel = () => {
+        this.setState({
+            show_employee_management: false
+        });
+        setTimeout(
+            function () {
+                this.setState({
+                    show_scanner: true
+                });
+            }.bind(this),
+            500
+        );
     };
     handleScan = data => {
         if (data && this.state.show_scanner) {
@@ -83,11 +110,10 @@ class EmployeeView extends Component {
     render() {
         return (
             <div>
-                <Modal size="fullscreen" open={this.state.show_employee_management} onClose={this.toggleManagementPanel}>
-
-                </Modal>
-                <Transition animation="fade" duration={500} visible={this.state.show_scanner}>
-                    <div>
+                {/* <Modal size="fullscreen" open={this.state.show_employee_management} onClose={this.open_management_panel}> */}
+                {/* </Modal> */}
+                <Transition.Group animation="fade" duration={500}>
+                    {this.state.show_scanner && <div>
                         <QrReader
                             delay={300}
                             onError={this.handleError}
@@ -95,72 +121,75 @@ class EmployeeView extends Component {
                             style={{ width: '100%' }}
                         />
                         <Card fluid header="Aim this at a customer's QR code" />
-                        <Button attached="bottom">Open Employee Management</Button>
-                    </div>
-                </Transition>
-                <Transition animation="fade" duration={500} visible={this.state.show_customer_info}>
-                    <CustomerInfo customer_info={this.state.customer_info}
+                        <Button attached="bottom" onClick={this.open_management_panel}>Open Employee Management</Button>
+                    </div>}
+                </Transition.Group>
+                <Transition.Group animation="fade" duration={500}>
+                    {this.state.show_customer_info && <CustomerInfo customer_info={this.state.customer_info}
                         stamps_subtracted={this.state.stamps_subtracted}
                         new_number_of_stamps={this.state.new_number_of_stamps}
                         add_a_stamp={this.add_a_stamp}
                         redeem_stamps={this.redeem_stamps}
                         redeem_value={this.state.redeem_value}
                         apply_stamps={this.apply_stamps}
-                        show_customer_info={this.state.show_customer_info} />
-                </Transition>
+                        show_customer_info={this.state.show_customer_info} />}
+                </Transition.Group>
+                <Transition.Group animation="fade" duration={500}>
+                    {this.state.show_employee_management && <div>
+                        <EmployeeManagement user_data={this.props.user_data}
+                            socket={this.props.socket}
+                            close_management_panel={this.close_management_panel} />
+                    </div>}
+                </Transition.Group>
             </div>
         );
     }
 }
 function CustomerInfo(props) {
     // TODO format dates to look nice
-    if (props.show_customer_info) { //jank fix for weird transition issue
-        return (
-            <div>
-                <Statistic color='red' size='huge' style={{ width: "100%" }}>
-                    <Statistic.Value>{props.new_number_of_stamps + props.customer_info.stamps}</Statistic.Value>
-                    <Statistic.Label>Current Stamps</Statistic.Label>
-                </Statistic>
-                <Grid columns={2}>
-                    <Grid.Row>
-                        <Grid.Column>
-                            <Button size='massive' onClick={props.redeem_stamps} disabled={props.stamps_subtracted || props.customer_info.stamps < props.redeem_value} fluid>{`Redeem ${props.redeem_value} Stamps`}</Button>
-                        </Grid.Column>
-                        <Grid.Column>
-                            <Button size='massive' onClick={props.add_a_stamp} fluid>Add a Stamp</Button>
-                        </Grid.Column>
-                    </Grid.Row>
+    return (
+        <div>
+            <Statistic color='red' size='huge' style={{ width: "100%" }}>
+                <Statistic.Value>{props.new_number_of_stamps + props.customer_info.stamps}</Statistic.Value>
+                <Statistic.Label>Current Stamps</Statistic.Label>
+            </Statistic>
+            <Grid columns={2}>
+                <Grid.Row>
+                    <Grid.Column>
+                        <Button size='massive' onClick={props.redeem_stamps} disabled={props.stamps_subtracted || props.customer_info.stamps < props.redeem_value} fluid>{`Redeem ${props.redeem_value} Stamps`}</Button>
+                    </Grid.Column>
+                    <Grid.Column>
+                        <Button size='massive' onClick={props.add_a_stamp} fluid>Add a Stamp</Button>
+                    </Grid.Column>
+                </Grid.Row>
 
-                    <Grid.Row centered columns={2}>
-                        <Grid.Column>
-                            <Statistic color='red' size='mini' style={{ width: "100%" }}>
-                                <Statistic.Label>Last Visit</Statistic.Label>
-                                <Statistic.Value text>{props.customer_info.last_visit ? props.customer_info.last_visit : "Never"}</Statistic.Value>
-                            </Statistic>
-                        </Grid.Column>
-                        <Grid.Column>
-                            <Statistic color='red' size='mini' style={{ width: "100%" }}>
-                                <Statistic.Label>Visits Every</Statistic.Label>
-                                <Statistic.Value text>{props.customer_info.average_days_between_visits ? `~${Math.round(props.customer_info.average_days_between_visits)} days` : "???"}</Statistic.Value>
-                            </Statistic>
-                        </Grid.Column>
-                    </Grid.Row>
+                <Grid.Row centered columns={2}>
+                    <Grid.Column>
+                        <Statistic color='red' size='mini' style={{ width: "100%" }}>
+                            <Statistic.Label>Last Visit</Statistic.Label>
+                            <Statistic.Value text>{props.customer_info.last_visit ? props.customer_info.last_visit : "Never"}</Statistic.Value>
+                        </Statistic>
+                    </Grid.Column>
+                    <Grid.Column>
+                        <Statistic color='red' size='mini' style={{ width: "100%" }}>
+                            <Statistic.Label>Visits Every</Statistic.Label>
+                            <Statistic.Value text>{props.customer_info.average_days_between_visits ? `~${Math.round(props.customer_info.average_days_between_visits)} days` : "???"}</Statistic.Value>
+                        </Statistic>
+                    </Grid.Column>
+                </Grid.Row>
 
-                    <Grid.Row centered columns={1}>
-                        <Grid.Column>
-                            <Statistic color='red' size='mini' style={{ width: "100%" }}>
-                                <Statistic.Label>Customer Since</Statistic.Label>
-                                <Statistic.Value text>{props.customer_info.customer_since}</Statistic.Value>
-                            </Statistic>
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
+                <Grid.Row centered columns={1}>
+                    <Grid.Column>
+                        <Statistic color='red' size='mini' style={{ width: "100%" }}>
+                            <Statistic.Label>Customer Since</Statistic.Label>
+                            <Statistic.Value text>{props.customer_info.customer_since}</Statistic.Value>
+                        </Statistic>
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid>
 
-                <Button size='massive' onClick={props.apply_stamps} fluid>Apply</Button>
-            </div>
-        );
-    } else {
-        return (<div></div>);
-    }
+            <Button size='massive' onClick={props.apply_stamps} fluid>Apply</Button>
+        </div>
+    );
 }
 export default EmployeeView;

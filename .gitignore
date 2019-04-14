@@ -4,3 +4,7 @@ client/flask_session/
 *.pyc
 
 server/flask_session/
+
+server/static/
+
+server/templates/
