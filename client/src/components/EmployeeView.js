@@ -36,7 +36,7 @@ class EmployeeView extends Component {
                     show_customer_info: true
                 });
             }.bind(this),
-            500
+            250
         );
     };
     close_customer_info = () => {
@@ -49,7 +49,7 @@ class EmployeeView extends Component {
                     show_scanner: true
                 });
             }.bind(this),
-            500
+            250
         );
     };
     open_management_panel = () => {
@@ -62,7 +62,7 @@ class EmployeeView extends Component {
                     show_employee_management: true
                 });
             }.bind(this),
-            500
+            250
         );
     };
     close_management_panel = () => {
@@ -75,7 +75,7 @@ class EmployeeView extends Component {
                     show_scanner: true
                 });
             }.bind(this),
-            500
+            250
         );
     };
     handleScan = data => {
@@ -110,9 +110,7 @@ class EmployeeView extends Component {
     render() {
         return (
             <div>
-                {/* <Modal size="fullscreen" open={this.state.show_employee_management} onClose={this.open_management_panel}> */}
-                {/* </Modal> */}
-                <Transition.Group animation="fade" duration={500}>
+                <Transition.Group animation="fade" duration={250}>
                     {this.state.show_scanner && <div>
                         <QrReader
                             delay={300}
@@ -124,7 +122,7 @@ class EmployeeView extends Component {
                         <Button attached="bottom" onClick={this.open_management_panel}>Open Employee Management</Button>
                     </div>}
                 </Transition.Group>
-                <Transition.Group animation="fade" duration={500}>
+                <Transition.Group animation="fade" duration={250}>
                     {this.state.show_customer_info && <CustomerInfo customer_info={this.state.customer_info}
                         stamps_subtracted={this.state.stamps_subtracted}
                         new_number_of_stamps={this.state.new_number_of_stamps}
@@ -134,7 +132,7 @@ class EmployeeView extends Component {
                         apply_stamps={this.apply_stamps}
                         show_customer_info={this.state.show_customer_info} />}
                 </Transition.Group>
-                <Transition.Group animation="fade" duration={500}>
+                <Transition.Group animation="fade" duration={250}>
                     {this.state.show_employee_management && <div>
                         <EmployeeManagement user_data={this.props.user_data}
                             socket={this.props.socket}
