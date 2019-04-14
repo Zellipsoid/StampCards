@@ -11,6 +11,7 @@ class EmployeeManagement extends Component {
         super(props);
         props.socket.on("employee_table", (data) => {
             console.log('got employee table info!')
+            console.log(data);
         });
     }
     componentDidMount() {

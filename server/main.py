@@ -88,6 +88,9 @@ def load_user(user_id):
     else:
         return
 
+def get_employees(db):
+    return db.execute("SELECT * FROM employee;").fetchall()
+
 @app.route("/")
 def my_index():
     return flask.render_template("index.html")
@@ -178,9 +181,11 @@ def update_stamps(data):
 
 @socketio.on('get_employees')
 def get_employee_list(data):
+    db = sqlite3.connect('../stamps.db')
     if authenticate_request(data['username_requesting'], 2, db):
-        db = sqlite3.connect('../stamps.db')
-        employees = db.execute("SELECT username FROM user WHERE username=?;", (credentials['username'],)).fetchall()
+        employees = get_employees(db)
+        emit('employee_table', employees)
+    db.close()
 
 if __name__ == '__main__':
     #starting server, set all user sessions to null
