@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import QrReader from 'react-qr-reader'
-import { Card, Statistic, Transition, Grid, Button, Modal } from 'semantic-ui-react'
+import { Card, Statistic, Transition, Grid, Button } from 'semantic-ui-react'
 import EmployeeManagement from "./EmployeeManagement";
 import "../App.css";
 // import {

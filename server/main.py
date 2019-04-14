@@ -176,6 +176,12 @@ def update_stamps(data):
 
     db.close()
 
+@socketio.on('get_employees')
+def get_employee_list(data):
+    if authenticate_request(data['username_requesting'], 2, db):
+        db = sqlite3.connect('../stamps.db')
+        employees = db.execute("SELECT username FROM user WHERE username=?;", (credentials['username'],)).fetchall()
+
 if __name__ == '__main__':
     #starting server, set all user sessions to null
     print("Prepping database for launch...")

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Modal } from 'semantic-ui-react'
+import { Button, Table, Checkbox, Icon } from 'semantic-ui-react'
 import "../App.css";
 // import {
 //   Transition
@@ -15,28 +15,84 @@ class EmployeeManagement extends Component {
     }
     componentDidMount() {
         console.log('mounted table!')
+        this.props.socket.emit("get_employees", {
+            username_requesting: this.props.user_data.username
+        });
     }
     render() {
         return (
             <div>
-                {/* <Modal size="fullscreen"
-                    trigger={<Button onClick={this.toggleManagementPanel} attached="bottom">Open Employee Management</Button>}
-                    open={this.state.show_employee_management}
-                    onClose={this.toggleManagementPanel}
-                    size="fullscreen">
-                    <Modal.Header>Delete Your Account</Modal.Header>
-                    <Modal.Content>
-                        <p>Are you sure you want to delete your account</p>
-                    </Modal.Content>
-                    <Modal.Actions>
-                        <Button negative onClick={this.props.toggleManagementPanel}>No</Button>
-                        <Button positive icon='checkmark' labelPosition='right' content='Yes' onClick={this.props.toggleManagementPanel} />
-                    </Modal.Actions> */}
-                <p>Hello</p>
+                <Table celled compact definition>
+                    <Table.Header fullWidth>
+                        <Table.Row>
+                            <Table.HeaderCell>Username</Table.HeaderCell>
+                            <Table.HeaderCell>Manager</Table.HeaderCell>
+                            <Table.HeaderCell>Date Started</Table.HeaderCell>
+                            <Table.HeaderCell>Remove</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+
+                    <Table.Body>
+
+                        <Table.Row>
+                            <Table.Cell collapsing>
+                                <Checkbox slider />
+                            </Table.Cell>
+                            <Table.Cell>Jamie Harington</Table.Cell>
+                            <Table.Cell>January 11, 2014</Table.Cell>
+                            <Table.Cell>jamieharingonton@yahoo.com</Table.Cell>
+                            <Table.Cell>Yes</Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                            <Table.Cell collapsing>
+                                <Checkbox slider />
+                            </Table.Cell>
+                            <Table.Cell>Jill Lewis</Table.Cell>
+                            <Table.Cell>May 11, 2014</Table.Cell>
+                            <Table.Cell>jilsewris22@yahoo.com</Table.Cell>
+                            <Table.Cell>Yes</Table.Cell>
+                        </Table.Row>
+                    </Table.Body>
+
+                    <Table.Footer fullWidth>
+                        <Table.Row>
+                            <Table.HeaderCell />
+                            <Table.HeaderCell colSpan='4'>
+                                <Button floated='right' icon labelPosition='left' primary size='small'>
+                                    <Icon name='user' /> Add User
+          </Button>
+                                <Button size='small'>Approve</Button>
+                                <Button disabled size='small'>
+                                    Approve All
+          </Button>
+                            </Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Footer>
+                </Table>
                 <Button onClick={this.props.close_management_panel} attached="bottom" fluid>Back to Scanner</Button>
                 {/* </Modal> */}
             </div>
         );
     }
+}
+function TableRow(props) {
+    let employee = props.employee;
+    return (
+        <div>
+            <Table.Row>
+                <Table.Cell collapsing>
+                    <Checkbox slider />
+                </Table.Cell>
+                <Table.Cell>{employee.username}</Table.Cell>
+                <Table.Cell>{employee.date_started}</Table.Cell>
+                <Table.Cell collapsing>
+                    <Checkbox slider />
+                </Table.Cell>
+                <Table.Cell collapsing>
+                    <Button>Remove</Button>
+                </Table.Cell>
+            </Table.Row>
+        </div>
+    );
 }
 export default EmployeeManagement;
