@@ -6,12 +6,15 @@ import "../App.css";
 // } from "semantic-ui-react";
 
 class EmployeeManagement extends Component {
-    state = {}
+    state = {
+        employees: []
+    }
     constructor(props) {
         super(props);
         props.socket.on("employee_table", (data) => {
             console.log('got employee table info!')
-            console.log(data);
+            // console.log(data);
+            this.setState({ employees: data });
         });
     }
     componentDidMount() {
@@ -26,23 +29,25 @@ class EmployeeManagement extends Component {
                 <Table celled compact definition>
                     <Table.Header fullWidth>
                         <Table.Row>
-                            <Table.HeaderCell>Username</Table.HeaderCell>
-                            <Table.HeaderCell>Manager</Table.HeaderCell>
-                            <Table.HeaderCell>Date Started</Table.HeaderCell>
-                            <Table.HeaderCell>Remove</Table.HeaderCell>
+                            <Table.HeaderCell>Employees</Table.HeaderCell>
+                            {/* <Table.HeaderCell>Manager</Table.HeaderCell> */}
+                            {/* <Table.HeaderCell>Date Started</Table.HeaderCell> */}
+                            {/* <Table.HeaderCell>Remove</Table.HeaderCell> */}
                         </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
+                        <TableRow employees={this.state.employees} />
 
-                        <Table.Row>
+
+
+                        {/* <Table.Row>
                             <Table.Cell collapsing>
                                 <Checkbox slider />
                             </Table.Cell>
                             <Table.Cell>Jamie Harington</Table.Cell>
                             <Table.Cell>January 11, 2014</Table.Cell>
                             <Table.Cell>jamieharingonton@yahoo.com</Table.Cell>
-                            <Table.Cell>Yes</Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell collapsing>
@@ -51,11 +56,10 @@ class EmployeeManagement extends Component {
                             <Table.Cell>Jill Lewis</Table.Cell>
                             <Table.Cell>May 11, 2014</Table.Cell>
                             <Table.Cell>jilsewris22@yahoo.com</Table.Cell>
-                            <Table.Cell>Yes</Table.Cell>
-                        </Table.Row>
+                        </Table.Row> */}
                     </Table.Body>
 
-                    <Table.Footer fullWidth>
+                    {/* <Table.Footer fullWidth>
                         <Table.Row>
                             <Table.HeaderCell />
                             <Table.HeaderCell colSpan='4'>
@@ -68,7 +72,7 @@ class EmployeeManagement extends Component {
           </Button>
                             </Table.HeaderCell>
                         </Table.Row>
-                    </Table.Footer>
+                    </Table.Footer> */}
                 </Table>
                 <Button onClick={this.props.close_management_panel} attached="bottom" fluid>Back to Scanner</Button>
                 {/* </Modal> */}
@@ -77,23 +81,24 @@ class EmployeeManagement extends Component {
     }
 }
 function TableRow(props) {
-    let employee = props.employee;
+    let employees = props.employees;
+    let employee_array = employees.map(employee =>
+        <Table.Row>
+            <Table.Cell collapsing>
+                <Checkbox slider />
+            </Table.Cell>
+            <Table.Cell>{employee.username}</Table.Cell>
+            <Table.Cell>{employee.date_started}</Table.Cell>
+            <Table.Cell collapsing>
+                <Checkbox slider />
+            </Table.Cell>
+            <Table.Cell collapsing>
+                <Button>Remove</Button>
+            </Table.Cell>
+        </Table.Row>
+    )
     return (
-        <div>
-            <Table.Row>
-                <Table.Cell collapsing>
-                    <Checkbox slider />
-                </Table.Cell>
-                <Table.Cell>{employee.username}</Table.Cell>
-                <Table.Cell>{employee.date_started}</Table.Cell>
-                <Table.Cell collapsing>
-                    <Checkbox slider />
-                </Table.Cell>
-                <Table.Cell collapsing>
-                    <Button>Remove</Button>
-                </Table.Cell>
-            </Table.Row>
-        </div>
+        { employee_array }
     );
 }
 export default EmployeeManagement;

@@ -112,6 +112,10 @@ def disconnect():
         print("user logged out")
     print('disconnected')
 
+@socketio.on_error_default  # handles all namespaces without an explicit error handler
+def default_error_handler(e):
+    pass
+
 @socketio.on('login')
 def find_user(credentials):
     credentials['username'] = credentials['username'].lower().replace(' ', '') #make username lowercase, replace spaces
