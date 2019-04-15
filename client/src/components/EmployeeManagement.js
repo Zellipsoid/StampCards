@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Table, Checkbox, Input, Transition } from 'semantic-ui-react'
+import { Button, Table, Checkbox, Input, Transition, Modal } from 'semantic-ui-react'
 import "../App.css";
 // import {
 //   Transition
@@ -8,7 +8,8 @@ import "../App.css";
 class EmployeeManagement extends Component {
     state = {
         employees: [],
-        employee_to_create: ""
+        employee_to_create: "",
+        error: ""
     }
     constructor(props) {
         super(props);
@@ -31,6 +32,9 @@ class EmployeeManagement extends Component {
         this.setState({ validation_errors: false });
         this.setState({ [evt.target.name]: evt.target.value });
     };
+    closeModal = () => {
+        this.setState({ error: "" });
+    }
     getEmployeeStatus = (username) => {
         let user = this.state.employees.filter(obj => {
             return obj[0] === username;
@@ -65,6 +69,13 @@ class EmployeeManagement extends Component {
     render() {
         return (
             <div>
+                <Modal
+                    open={this.state.error}
+                    header='Error'
+                    content={this.state.error}
+                    actions={['Snooze', { key: 'done', content: 'Done', positive: true }]}
+                    onClose={this.closeModal}
+                />
                 <Input fluid action={{ content: 'Add to Roster', onClick: this.add_employee }} placeholder='Username' onChange={this.handleChange} name="employee_to_create" />
                 <EmployeeTable employees={this.state.employees} getEmployeeStatus={this.getEmployeeStatus} changeEmployeeStatus={this.changeEmployeeStatus} remove_employee={this.remove_employee} user_data={this.props.user_data} />
                 <Button onClick={this.props.close_management_panel} attached="bottom" fluid>Back to Scanner</Button>
