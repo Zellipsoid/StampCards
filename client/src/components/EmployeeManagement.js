@@ -38,7 +38,9 @@ class EmployeeManagement extends Component {
     }
     changeEmployeeStatus = (username) => {
         console.log(username);
-        let user = this.state.employees.filter(obj => {
+        // clone an array
+        let employees_clone = JSON.parse(JSON.stringify(this.state.employees));
+        let user = employees_clone.filter(obj => {
             return obj['0'] === username;
         })
         if (user['1'] === 1) {
@@ -46,12 +48,16 @@ class EmployeeManagement extends Component {
         } else if (user['1'] === 2) {
             user['1'] = 1;
         }
+        this.setState({ employees: employees_clone });
+    }
+    remove_employee = (username) => {
+        console.log(`removing ${username}`);
     }
     render() {
         return (
             <div>
                 <Input fluid action='Add to Roster' placeholder='Username' />
-                <EmployeeTable employees={this.state.employees} getEmployeeStatus={this.getEmployeeStatus} changeEmployeeStatus={this.changeEmployeeStatus} />
+                <EmployeeTable employees={this.state.employees} getEmployeeStatus={this.getEmployeeStatus} changeEmployeeStatus={this.changeEmployeeStatus} remove_employee={this.remove_employee} />
                 <Button onClick={this.props.close_management_panel} attached="bottom" fluid>Back to Scanner</Button>
             </div>
         );
@@ -64,10 +70,10 @@ function EmployeeTable(props) {
         <Table.Row key={employee['0']}>
             <Table.Cell>{employee['0']}</Table.Cell> {/*username*/}
             <Table.Cell collapsing>
-                <Checkbox toggle label="Manager" onChange={props.changeEmployeeStatus(employee['0'])} checked={props.getEmployeeStatus(employee['0'])} disabled={employee['1'] === 3} />
+                <Checkbox toggle label="Manager" onClick={() => { props.changeEmployeeStatus(employee['0']) }} checked={props.getEmployeeStatus(employee['0'])} disabled={employee['1'] === 3} />
             </Table.Cell>
             <Table.Cell collapsing>
-                <Button disabled={employee['1'] === 3} >Remove Employee</Button>
+                <Button onClick={props.remove_employee} disabled={employee['1'] === 3} >Remove Employee</Button>
             </Table.Cell>
         </Table.Row>
     )
