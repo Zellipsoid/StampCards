@@ -16,7 +16,8 @@ class EmployeeView extends Component {
         show_employee_management: false,
         new_number_of_stamps: 0,
         stamps_subtracted: false,
-        redeem_value: 8
+        redeem_value: 8,
+        run_animation: true
     }
     constructor(props) {
         super(props);
@@ -41,7 +42,7 @@ class EmployeeView extends Component {
     };
     close_customer_info = () => {
         this.setState({
-            show_customer_info: false
+            show_customer_info: false, run_animation: true
         });
         setTimeout(
             function () {
@@ -90,12 +91,14 @@ class EmployeeView extends Component {
         console.error(err)
     }
     add_a_stamp = () => {
-        console.log("Adding a stamp!")
-        this.setState({ new_number_of_stamps: this.state.new_number_of_stamps + 1 })
+        console.log("Adding a stamp!");
+        this.setState({ new_number_of_stamps: this.state.new_number_of_stamps + 1 });
+        this.setState({ run_animation: !this.state.run_animation });
     }
     redeem_stamps = () => {
-        console.log("Redeeming stamps!")
-        this.setState({ new_number_of_stamps: this.state.new_number_of_stamps - this.state.redeem_value, stamps_subtracted: true })
+        console.log("Redeeming stamps!");
+        this.setState({ new_number_of_stamps: this.state.new_number_of_stamps - this.state.redeem_value, stamps_subtracted: true });
+        this.setState({ run_animation: !this.state.run_animation });
     }
     apply_stamps = () => {
         console.log("Saving data...")
@@ -130,7 +133,8 @@ class EmployeeView extends Component {
                         redeem_stamps={this.redeem_stamps}
                         redeem_value={this.state.redeem_value}
                         apply_stamps={this.apply_stamps}
-                        show_customer_info={this.state.show_customer_info} />}
+                        show_customer_info={this.state.show_customer_info}
+                        run_animation={this.state.run_animation} />}
                 </Transition.Group>
                 <Transition.Group animation="fade" duration={250}>
                     {this.state.show_employee_management && <div>
@@ -147,10 +151,12 @@ function CustomerInfo(props) {
     // TODO format dates to look nice
     return (
         <div>
-            <Statistic color='red' size='huge' style={{ width: "100%" }}>
-                <Statistic.Value>{props.new_number_of_stamps + props.customer_info.stamps}</Statistic.Value>
-                <Statistic.Label>Current Stamps</Statistic.Label>
-            </Statistic>
+            <Transition animation={"jiggle"} duration={100} visible={props.run_animation}>
+                <Statistic color='red' size='huge' style={{ width: "100%" }}>
+                    <Statistic.Value>{props.new_number_of_stamps + props.customer_info.stamps}</Statistic.Value>
+                    <Statistic.Label>Current Stamps</Statistic.Label>
+                </Statistic>
+            </Transition>
             <Grid columns={2}>
                 <Grid.Row>
                     <Grid.Column>
