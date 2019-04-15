@@ -15,7 +15,8 @@ class App extends Component {
   state = {
     authenticated: false,
     show_dashboard: false,
-    user_data: {}
+    user_data: {},
+    run_animation: true //toggle this to run stamp animation
   }
   constructor() {
     super();
@@ -28,7 +29,7 @@ class App extends Component {
     socket.on("refresh_user_data", (data) => {
       console.log(`User refreshed:`);
       console.log(data);
-      this.setState({ user_data: data });
+      this.setState({ user_data: data, run_animation: !this.state.run_animation });
     });
   }
   open_dashboard = () => {
@@ -57,7 +58,7 @@ class App extends Component {
         </Transition>
         <Transition animation="fade" duration={500} visible={this.state.show_dashboard}>
           <div className="center">
-            <Dashboard socket={socket} user_data={this.state.user_data} />
+            <Dashboard socket={socket} user_data={this.state.user_data} run_animation={this.state.run_animation} />
           </div>
         </Transition>
       </div>

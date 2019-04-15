@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Card, Statistic } from 'semantic-ui-react'
+import { Card, Statistic, Transition } from 'semantic-ui-react'
 import "../App.css";
 import EmployeeView from "./EmployeeView";
 // import {
@@ -16,7 +16,7 @@ class Dashboard extends Component {
         return (
             <div>
                 {this.props.user_data.rank === null ?
-                    <CustomerView user_data={this.props.user_data} />
+                    <CustomerView user_data={this.props.user_data} run_animation={this.props.run_animation} />
                     :
                     <div>
                         <EmployeeView socket={this.props.socket} user_data={this.props.user_data} />
@@ -38,10 +38,12 @@ function CustomerView(props) {
                 <QRCode value={props.user_data.username} style={{ width: '100%', height: 'auto' }} />
             </div>
             <Card fluid header="Have a cashier scan this to earn or redeem points" />
-            <Statistic color='red' size='huge' style={{ width: "100%" }}>
-                <Statistic.Value>{props.user_data.stamps}</Statistic.Value>
-                <Statistic.Label>Stamps Earned</Statistic.Label>
-            </Statistic>
-        </div>
+            <Transition animation={"jiggle"} duration={100} visible={props.run_animation}>
+                <Statistic color='red' size='huge' style={{ width: "100%" }}>
+                    <Statistic.Value>{props.user_data.stamps}</Statistic.Value>
+                    <Statistic.Label>Stamps Earned</Statistic.Label>
+                </Statistic>
+            </Transition>
+        </div >
     );
 }
