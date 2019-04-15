@@ -82,7 +82,7 @@ function EmployeeTable(props) {
                 <Checkbox toggle label="Manager" onClick={() => { props.changeEmployeeStatus(employee['0'], employee['1']) }} checked={props.getEmployeeStatus(employee['0'])} disabled={employee['1'] === 3 || employee['0'] === props.user_data.username} />
             </Table.Cell>
             <Table.Cell collapsing>
-                <Button onClick={() => { props.remove_employee(employee['0']) }} disabled={employee['1'] === 3 || employee['0'] === props.user_data.username} >Remove Employee</Button>
+                <Button onClick={() => { props.remove_employee(employee['0']) }} disabled={employee['1'] === 3 || employee['0'] === props.user_data.username} icon='trash'></Button>
             </Table.Cell>
         </Table.Row>
     )
