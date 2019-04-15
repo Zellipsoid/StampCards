@@ -231,7 +231,7 @@ def add_employee(data):
         print(user)
         error = ""
         if user == None:
-            error = "User not found. Please have this employee create an account."
+            error = "This user was not found. Please have this employee create an account."
         elif user[0] != None:
             error = "This user is aready an employee."
         else:
@@ -243,6 +243,7 @@ def add_employee(data):
         if error:
             print(error)
             # emit error here
+            emit('add_employee_error', error)
     else:
         print('Rank too low to update this employee')
     db.close()

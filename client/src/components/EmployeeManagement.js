@@ -19,6 +19,9 @@ class EmployeeManagement extends Component {
             // console.log(data);
             this.setState({ employees: data });
         });
+        props.socket.on("add_employee_error", (error) => {
+            this.setState({ error: error });
+        });
     }
     componentDidMount() {
         console.log('mounted table!')
