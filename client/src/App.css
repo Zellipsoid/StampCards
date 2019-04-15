@@ -65,3 +65,7 @@
   width: auto;
   height: auto;
 }
+
+.table tr.visible.transition {
+  display: table-row !important;
+}

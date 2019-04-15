@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Table, Checkbox, Input } from 'semantic-ui-react'
+import { Button, Table, Checkbox, Input, Transition } from 'semantic-ui-react'
 import "../App.css";
 // import {
 //   Transition
@@ -93,10 +93,9 @@ function EmployeeTable(props) {
                     <Table.HeaderCell>Employees</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
-
-            <Table.Body>
+            <Transition.Group as={Table.Body}>
                 {employee_array}
-            </Table.Body>
+            </Transition.Group>
         </Table>
     );
 }
