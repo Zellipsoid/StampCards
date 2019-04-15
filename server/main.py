@@ -227,7 +227,7 @@ def add_employee(data):
     db = sqlite3.connect('../stamps.db')
     if authenticate_request(data['username_requesting'], 2, db):
         print('authenticated')
-        user = db.execute('SELECT rank FROM user NATURAL LEFT JOIN employee WHERE username=?', (data['employee_to_create'])).fetchone()
+        user = db.execute('SELECT rank FROM user NATURAL LEFT JOIN employee WHERE username=?', (data['employee_to_create'],)).fetchone()
         print(user)
         error = ""
         if user == None:
