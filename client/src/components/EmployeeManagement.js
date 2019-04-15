@@ -25,9 +25,12 @@ class EmployeeManagement extends Component {
     }
     getEmployeeStatus = (username) => {
         let user = this.state.employees.filter(obj => {
-            return obj['0'] === username;
-        })
-        if (user['1'] == 3 || user['1'] == 2) {
+            return obj[0] === username;
+        })[0]
+        console.log(user);
+        console.log(user[1]);
+        console.log(typeof user[1]);
+        if (user[1] == 3 || user[1] == 2) {
             console.log(`${username} is manager`)
             return true;
         }
