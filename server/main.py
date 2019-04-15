@@ -191,6 +191,23 @@ def get_employee_list(data):
         emit('employee_table', employees)
     db.close()
 
+@socketio.on('update_employee_rank') #TODO make it so can't update rank 3 by changing front end
+def update_employee_rank(data):
+    print('Got update employee request')
+    print(data)
+    db = sqlite3.connect('../stamps.db')
+    if authenticate_request(data['username_requesting'], 2, db) and (data['new_rank'] == 1 or data['new_rank'] == 2) and (data['username_requesting'] != data['username_to_change']):
+        # print(data['username_requesting'] + ' is updating rank of ' + data['username_to_update'])
+        cursor = db.cursor()
+        cursor.execute("UPDATE employee SET rank = ? WHERE username=?;", (data['new_rank'], data['username_to_change']))        
+        db.commit()
+        employees = get_employees(db)
+        emit('employee_table', employees)
+    else:
+        print('Rank too low to update this employee')
+    db.close()
+
+
 if __name__ == '__main__':
     #starting server, set all user sessions to null
     print("Prepping database for launch...")
