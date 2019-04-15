@@ -119,7 +119,7 @@ class EmployeeView extends Component {
                             style={{ width: '100%' }}
                         />
                         <Card fluid header="Aim this at a customer's QR code" />
-                        <Button fluid onClick={this.open_management_panel}>Open Employee Management</Button>
+                        {this.props.user_data.rank >= 2 && <Button fluid onClick={this.open_management_panel}>Open Employee Management</Button>}
                     </div>}
                 </Transition.Group>
                 <Transition.Group animation="fade" duration={250}>

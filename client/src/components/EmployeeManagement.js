@@ -35,7 +35,7 @@ class EmployeeManagement extends Component {
         let user = this.state.employees.filter(obj => {
             return obj[0] === username;
         })[0];
-        if (user[1] == 3 || user[1] == 2) {
+        if (user[1] === 3 || user[1] === 2) {
             console.log(`${username} is manager`)
             return true;
         }
