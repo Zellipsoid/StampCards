@@ -197,7 +197,6 @@ def update_employee_rank(data):
     print(data)
     db = sqlite3.connect('../stamps.db')
     if authenticate_request(data['username_requesting'], 2, db) and (data['new_rank'] == 1 or data['new_rank'] == 2) and (data['username_requesting'] != data['username_to_change']):
-        # print(data['username_requesting'] + ' is updating rank of ' + data['username_to_update'])
         cursor = db.cursor()
         cursor.execute("UPDATE employee SET rank = ? WHERE username=?;", (data['new_rank'], data['username_to_change']))        
         db.commit()
@@ -207,6 +206,46 @@ def update_employee_rank(data):
         print('Rank too low to update this employee')
     db.close()
 
+@socketio.on('delete_employee') #TODO make it so can't update rank 3 by changing front end
+def delete_employee(data):
+    print('Got delete employee request')
+    print(data)
+    db = sqlite3.connect('../stamps.db')
+    if authenticate_request(data['username_requesting'], 2, db) and (data['username_requesting'] != data['username_to_delete']):
+        cursor = db.cursor()
+        cursor.execute("DELETE FROM employee WHERE username=?;", (data['username_to_delete'],))        
+        db.commit()
+        employees = get_employees(db)
+        emit('employee_table', employees)
+    else:
+        print('Rank too low to update this employee')
+    db.close()
+
+@socketio.on('add_employee')
+def add_employee(data):
+    print('Got add employee request')
+    db = sqlite3.connect('../stamps.db')
+    if authenticate_request(data['username_requesting'], 2, db):
+        print('authenticated')
+        user = db.execute('SELECT rank FROM user NATURAL LEFT JOIN employee WHERE username=?', (data['employee_to_create'])).fetchone()
+        print(user)
+        error = ""
+        if user == None:
+            error = "User not found. Please have this employee create an account."
+        elif user[0] != None:
+            error = "This user is aready an employee."
+        else:
+            cursor = db.cursor()
+            cursor.execute("INSERT INTO employee(username, rank, date_started) VALUES(?,?,?);", (data['employee_to_create'],1, datetime.date.today().isoformat()))     
+            db.commit()
+            employees = get_employees(db)
+            emit('employee_table', employees)
+        if error:
+            print(error)
+            # emit error here
+    else:
+        print('Rank too low to update this employee')
+    db.close()
 
 if __name__ == '__main__':
     #starting server, set all user sessions to null
