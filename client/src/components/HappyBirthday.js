@@ -5,10 +5,6 @@ import Confetti from 'react-confetti'
 
 class HappyBirthday extends Component {
     state = { birthday: false }
-    // constructor(props) {
-    //     super(props);
-    // }
-
     componentDidMount() {
         let today = new Date().toISOString();
         let is_birthday = false;

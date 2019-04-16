@@ -1,19 +1,15 @@
 import flask
 from flask_socketio import SocketIO, send, emit
-# from flask_session import Session
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
 import sqlite3
 from passlib.hash import pbkdf2_sha256
 import datetime
 
 app = flask.Flask("__main__")
-# app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SECRET_KEY'] = 'avraerbaweg23t2fe'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-# login_manager.login_view = "login"
-# Session(app)
 socketio = SocketIO(app)
 
 
@@ -29,13 +25,6 @@ def authenticate_request(username, required_rank, db):
         return False
     else:
         return True
-
-# def get_number_of_stamps(username, db):
-#     stamps = db.execute("SELECT stamps FROM user WHERE username=?;", (username,)).fetchone()
-#     if (stamps):
-#         return stamps[0]
-#     else:
-#         return -1
 
 def generate_user_information(username, db): # returns tuple (user_data, current_user_session)
     #grab user and associated employee data, if it exists

@@ -8,9 +8,6 @@ var QRCode = require('qrcode.react');
 
 class Dashboard extends Component {
     state = {}
-    // constructor(props) {
-    //     super(props);
-    // }
     render() {
         return (
             <div>
