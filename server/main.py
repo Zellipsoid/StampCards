@@ -227,6 +227,7 @@ def add_employee(data):
     db = sqlite3.connect('../stamps.db')
     if authenticate_request(data['username_requesting'], 2, db):
         print('authenticated')
+        data['employee_to_create'] = data['employee_to_create'].lower().replace(' ', '') #make username lowercase, replace spaces
         user = db.execute('SELECT rank FROM user NATURAL LEFT JOIN employee WHERE username=?', (data['employee_to_create'],)).fetchone()
         print(user)
         error = ""
