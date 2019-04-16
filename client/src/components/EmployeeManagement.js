@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import { Button, Table, Checkbox, Input, Transition, Modal } from 'semantic-ui-react'
 import "../App.css";
-// import {
-//   Transition
-// } from "semantic-ui-react";
+
 
 class EmployeeManagement extends Component {
     state = {

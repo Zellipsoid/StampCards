@@ -3,9 +3,7 @@ import QrReader from 'react-qr-reader'
 import { Card, Statistic, Transition, Grid, Button } from 'semantic-ui-react'
 import EmployeeManagement from "./EmployeeManagement";
 import "../App.css";
-// import {
-//   Transition
-// } from "semantic-ui-react";
+import HappyBirthday from "./HappyBirthday";
 
 class EmployeeView extends Component {
     state = {
@@ -151,6 +149,7 @@ function CustomerInfo(props) {
     // TODO format dates to look nice
     return (
         <div>
+            <HappyBirthday user_data={props.customer_info} />
             <Transition animation={"jiggle"} duration={100} visible={props.run_animation}>
                 <Statistic color='red' size='huge' style={{ width: "100%" }}>
                     <Statistic.Value>{props.new_number_of_stamps + props.customer_info.stamps}</Statistic.Value>

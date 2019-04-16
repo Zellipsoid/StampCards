@@ -2,9 +2,8 @@ import React, { Component } from "react";
 import { Card, Statistic, Transition } from 'semantic-ui-react'
 import "../App.css";
 import EmployeeView from "./EmployeeView";
-// import {
-//   Transition
-// } from "semantic-ui-react";
+import HappyBirthday from "./HappyBirthday";
+
 var QRCode = require('qrcode.react');
 
 class Dashboard extends Component {
@@ -32,8 +31,8 @@ export default Dashboard;
 
 function CustomerView(props) {
     return (
-
         <div>
+            <HappyBirthday user_data={props.user_data} />
             <div style={{ width: '85%', margin: '0 auto' }}>
                 <QRCode value={props.user_data.username} style={{ width: '100%', height: 'auto' }} />
             </div>
