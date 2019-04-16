@@ -17,17 +17,17 @@ class Login extends React.Component {
     username: "",
     password: "",
     confirm_password: "",
-    showCreateNewAccount: false,
-    showLogin: true,
+    show_create_new_account: false,
+    show_login: true,
     username_exists: false,
     invalid_login: false,
     validation_errors: false,
-    birthDay: "",
-    birthMonth: ""
+    birth_day: "",
+    birth_month: ""
   };
   constructor(props) {
     super(props);
-    this.handleChange = this.handleChange.bind(this);
+    this.handle_change = this.handle_change.bind(this);
     props.socket.on("username_taken", () => {
       console.log("username taken!");
       this.setState({ username_exists: true, validation_errors: true })
@@ -38,26 +38,26 @@ class Login extends React.Component {
     });
   }
 
-  handleChange = evt => {
+  handle_change = evt => {
     // check it out: we get the evt.target.name (which will be either "email" or "password")
     // and use it to target the key on our `state` object with the same name, using bracket syntax
     this.setState({ validation_errors: false });
     this.setState({ [evt.target.name]: evt.target.value });
   };
-  handleDateChange = (e, { name, value }) => this.setState({ [name]: value, validation_errors: false });
-  toggleSignUp = () => {
+  handle_date_change = (e, { name, value }) => this.setState({ [name]: value, validation_errors: false });
+  toggle_sign_up = () => {
     this.setState({ validation_errors: false });
-    let movingToCreateAccount;
-    if (this.state.showCreateNewAccount) {
-      movingToCreateAccount = false;
+    let moving_to_create_account;
+    if (this.state.show_create_new_account) {
+      moving_to_create_account = false;
     } else {
-      movingToCreateAccount = true;
+      moving_to_create_account = true;
     }
-    this.setState({ showCreateNewAccount: false, showLogin: false });
-    if (!movingToCreateAccount) {
+    this.setState({ show_create_new_account: false, show_login: false });
+    if (!moving_to_create_account) {
       setTimeout(
         function () {
-          this.setState({ showLogin: !this.state.showLogin });
+          this.setState({ show_login: !this.state.show_login });
         }.bind(this),
         500
       );
@@ -65,7 +65,7 @@ class Login extends React.Component {
       setTimeout(
         function () {
           this.setState({
-            showCreateNewAccount: !this.state.showCreateNewAccount
+            show_create_new_account: !this.state.show_create_new_account
           });
         }.bind(this),
         500
@@ -79,7 +79,7 @@ class Login extends React.Component {
     });
   };
   create_account = () => {
-    if (this.state.password !== this.state.confirm_password || this.state.password.length < 6 || this.state.birthDay === "" || this.state.birthMonth === "" || this.state.username.length < 4) {
+    if (this.state.password !== this.state.confirm_password || this.state.password.length < 6 || this.state.birth_day === "" || this.state.birth_month === "" || this.state.username.length < 4) {
       this.setState({
         validation_errors: true,
         username_exists: false,
@@ -95,10 +95,10 @@ class Login extends React.Component {
         username: this.state.username,
         password: this.state.password,
         birthday: `${
-          this.state.birthMonth < 10 ? "0" : ""
-          }${this.state.birthMonth.toString(10)}-${
-          this.state.birthDay < 10 ? "0" : ""
-          }${this.state.birthDay.toString(10)}`
+          this.state.birth_month < 10 ? "0" : ""
+          }${this.state.birth_month.toString(10)}-${
+          this.state.birth_day < 10 ? "0" : ""
+          }${this.state.birth_day.toString(10)}`
       });
     }
   };
@@ -112,7 +112,7 @@ class Login extends React.Component {
       message_text = "Passwords do not match";
     } else if (this.state.password.length < 6) {
       message_text = "Password must have at least 6 characters";
-    } else if (this.state.birthDay === "" || this.state.birthMonth === "") {
+    } else if (this.state.birth_day === "" || this.state.birth_month === "") {
       message_text = "Please enter a valid birthday";
     } else if (this.state.username.length < 4) {
       message_text = "Username must have at least 4 characters";
@@ -130,7 +130,7 @@ class Login extends React.Component {
       </div>
     );
   };
-  timePicker = () => {
+  time_picker = () => {
     const months = [
       { key: "Jan", text: "January", value: 1 },
       { key: "Feb", text: "February", value: 2 },
@@ -161,18 +161,18 @@ class Login extends React.Component {
             <Select
               placeholder="Month"
               options={months}
-              name="birthMonth"
+              name="birth_month"
               compact
-              onChange={this.handleDateChange}
+              onChange={this.handle_date_change}
             />
           </Menu.Menu>
           <Menu.Menu position="right">
             <Select
               placeholder="Day"
               options={days}
-              name="birthDay"
+              name="birth_day"
               compact
-              onChange={this.handleDateChange}
+              onChange={this.handle_date_change}
             />
           </Menu.Menu>
         </Menu>
@@ -187,14 +187,14 @@ class Login extends React.Component {
             <Input
               fluid
               name="confirm_password"
-              onChange={this.handleChange}
+              onChange={this.handle_change}
               placeholder="Confirm Password"
               type="password"
             />
           </div>
         </div>
         <div className="niceMargins">
-          <div className="row">{this.timePicker()}</div>
+          <div className="row">{this.time_picker()}</div>
         </div>
         <div className="niceMargins">
           <div className="row">
@@ -205,7 +205,7 @@ class Login extends React.Component {
         </div>
         <div className="niceMargins">
           <div className="row">
-            <Button fluid onClick={this.toggleSignUp}>
+            <Button fluid onClick={this.toggle_sign_up}>
               Back to login
             </Button>
           </div>
@@ -226,7 +226,7 @@ class Login extends React.Component {
 
         <div className="niceMargins">
           <div className="row">
-            <Button fluid onClick={this.toggleSignUp}>
+            <Button fluid onClick={this.toggle_sign_up}>
               Sign up
             </Button>
           </div>
@@ -236,7 +236,7 @@ class Login extends React.Component {
   };
 
   render() {
-    const { showCreateNewAccount, showLogin, validation_errors } = this.state;
+    const { show_create_new_account, show_login, validation_errors } = this.state;
     return (
       <Container>
         <div className="niceMargins">
@@ -245,7 +245,7 @@ class Login extends React.Component {
               fluid
               type="text"
               name="username"
-              onChange={this.handleChange}
+              onChange={this.handle_change}
               placeholder="Username"
             />
           </Grid.Row>
@@ -255,19 +255,19 @@ class Login extends React.Component {
             <Input
               fluid
               name="password"
-              onChange={this.handleChange}
+              onChange={this.handle_change}
               placeholder="Password"
               type="password"
             />
           </Grid.Row>
         </div>
-        <Transition animation="fade right" duration={500} visible={showLogin}>
+        <Transition animation="fade right" duration={500} visible={show_login}>
           {this.normal()}
         </Transition>
         <Transition
           animation="fade left"
           duration={500}
-          visible={showCreateNewAccount}
+          visible={show_create_new_account}
         >
           {this.create()}
         </Transition>
