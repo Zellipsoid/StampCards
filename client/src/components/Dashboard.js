@@ -37,7 +37,7 @@ function CustomerView(props) {
             <div style={{ width: '85%', margin: '0 auto' }}>
                 <QRCode value={props.user_data.username} style={{ width: '100%', height: 'auto' }} />
             </div>
-            <Card fluid header="Have a cashier scan this to earn or redeem points" />
+            <Card fluid header="Have a cashier scan this to earn or redeem stamps. Earn 8 to redeem!" />
             <Transition animation={"jiggle"} duration={100} visible={props.run_animation}>
                 <Statistic color='red' size='huge' style={{ width: "100%" }}>
                     <Statistic.Value>{props.user_data.stamps}</Statistic.Value>
