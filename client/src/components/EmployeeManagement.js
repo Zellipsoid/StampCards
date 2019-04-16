@@ -76,7 +76,7 @@ class EmployeeManagement extends Component {
                     open={this.state.error}
                     header='Error'
                     content={this.state.error}
-                    actions={['Snooze', { key: 'done', content: 'Done', positive: true }]}
+                    actions={[{ key: 'done', content: 'Done', positive: true }]}
                     onClose={this.closeModal}
                 />
                 <Input fluid action={{ content: 'Add to Roster', onClick: this.add_employee }} placeholder='Username' onChange={this.handleChange} name="employee_to_create" />
