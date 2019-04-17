@@ -4,8 +4,10 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, curren
 import sqlite3
 from passlib.hash import pbkdf2_sha256
 import datetime
+from flask_sslify import SSLify
 
 app = flask.Flask("__main__")
+sslify = SSLify(app)
 app.config['SECRET_KEY'] = 'avraerbaweg23t2fe'
 
 login_manager = LoginManager()
@@ -247,4 +249,4 @@ if __name__ == '__main__':
     db.commit()
     db.close()
     print("Running app...")
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=False)

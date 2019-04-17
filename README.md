@@ -4,6 +4,7 @@ Python packages used:
     sqlite3
     passlib
     datetime
+    flask_sslify
 Node modules used:
     "@babel/core": "7.2.2",
     "@svgr/webpack": "4.1.0",
