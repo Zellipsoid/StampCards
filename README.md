@@ -1,3 +1,13 @@
+To run program on a Debian-based Linux machine:
+    1. Install Python and the Python packeages listed below
+    2. Install Node/NPM
+    3. Run "sudo npm i" in top level of project directory
+    4. Ensure that semantic-ui-react and semantic-ui-css are properly installed
+    5. Install Ngrok and change any references in the project that are currently "zellipsoid.ngrok.io" (should be one in App.js) to the ngrok URL you were given
+    6. Laucnh Ngrok, forwarding port 5000
+    7. Run "npm run dev"
+    8. Open the Ngrok url you were given 
+
 Python packages used:
     flask_socketio
     flask_login
